@@ -42,7 +42,7 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ✅ The app supports viewing the following file types:  
   - Images  
   - PDFs (using PDFView)  
-  - MS Office files (using WKWebView)  
+  - MS Office files (using WKWebView)
 🚧 On the file view screen, the user can see the file name, creation date, and time.
 ❌ The following actions are available on the file view screen:  
   - Share the file with other apps  
