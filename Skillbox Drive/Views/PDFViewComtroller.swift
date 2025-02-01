@@ -1,8 +1,14 @@
 import UIKit
 import PDFKit
 
-class PDFViewController: UIViewController {
+protocol PDFViewProtocol: AnyObject {
+    func displayPDF(document: PDFDocument)
+    func showError(message: String)
+}
+
+class PDFViewController: UIViewController, PDFViewProtocol {
     private let presenter: PDFPresenter
+    private var pdfView: PDFView!
 
     init(presenter: PDFPresenter) {
         self.presenter = presenter
@@ -16,20 +22,24 @@ class PDFViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        presenter.attachView(self)
+        presenter.loadPDF()
+        presenter.updateNavigationBar()
     }
 
     private func setupUI() {
-        let pdfView = PDFView(frame: view.bounds)
-        view.addSubview(pdfView)
-
-        let item = presenter.getPDFItem()
-        title = item.name
+        pdfView = PDFView(frame: view.bounds)
         pdfView.autoScales = true
+        view.addSubview(pdfView)
+    }
 
-        if let document = PDFDocument(url: item.fileURL) {
-            pdfView.document = document
-        } else {
-            print("Failed to load PDF.")
-        }
+    func displayPDF(document: PDFDocument) {
+        pdfView.document = document
+    }
+
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }

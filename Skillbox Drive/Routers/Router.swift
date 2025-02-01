@@ -17,8 +17,8 @@ class Router {
         guard let filePath = item.file, let fileURL = URL(string: filePath) else {
             return
         }
-        let pdfItem = PDFModel(name: item.name, fileURL: fileURL)
-        let pdfPresenter = PDFPresenter(item: pdfItem)
+        let pdfPage = PDFModel(name: item.name, fileURL: fileURL)
+        let pdfPresenter = PDFPresenter(item: item, pdfFile: pdfPage)
         let pdfViewController = PDFViewController(presenter: pdfPresenter)
         navigationController?.pushViewController(pdfViewController, animated: true)
     }

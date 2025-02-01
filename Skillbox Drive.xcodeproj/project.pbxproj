@@ -64,6 +64,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		880AD68A2D4E997E008AD83D /* Extensions */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		883775042D3C398500C61981 /* New Folder */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "New Folder";
@@ -139,6 +144,7 @@
 		886EA0F42D04C95F00FB7A8F /* Skillbox Drive */ = {
 			isa = PBXGroup;
 			children = (
+				880AD68A2D4E997E008AD83D /* Extensions */,
 				88FD585A2D2767C40062FF8C /* Skillbox Drive.entitlements */,
 				886EA1012D04C97E00FB7A8F /* API */,
 				886EA0FD2D04C96600FB7A8F /* Models */,
@@ -228,6 +234,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				880AD68A2D4E997E008AD83D /* Extensions */,
 				883775042D3C398500C61981 /* New Folder */,
 				883775052D3C399900C61981 /* New Folder */,
 				883775062D3C39B300C61981 /* New Folder */,

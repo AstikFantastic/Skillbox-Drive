@@ -1,7 +1,7 @@
 import UIKit
 
 protocol FileDetailView: AnyObject {
-    func displayFileDetails(name: String, creationDate: String, previewImage: UIImage?)
+    func displayImage(image: UIImage?)
 }
 
 protocol ImagePresenterProtocol: AnyObject {
@@ -25,10 +25,7 @@ class ImagePresenter {
         self.view = view
     }
     
-    func loadFileDetails() {
-        let fileName = item.name
-        let creationDate = item.created
-        
+    func loadImage() {
         var previewImage: UIImage? = UIImage(named: "photo")
         
         if let previewURL = item.file {
@@ -37,15 +34,22 @@ class ImagePresenter {
                     switch result {
                     case .success(let image):
                         previewImage = image
-                        self?.view?.displayFileDetails(name: fileName, creationDate: creationDate, previewImage: previewImage)
+                        self?.view?.displayImage(image: previewImage)
                     case .failure(let error):
                         print("Ошибка загрузки изображения: \(error.localizedDescription)")
-                        self?.view?.displayFileDetails(name: fileName, creationDate: creationDate, previewImage: previewImage)
+                        self?.view?.displayImage(image: previewImage)
                     }
                 }
             }
         } else {
-            view?.displayFileDetails(name: fileName, creationDate: creationDate, previewImage: previewImage)
+            view?.displayImage(image: previewImage)
+        }
+    }
+    
+    func updateNavigationBar() {
+        if let viewController = view as? UIViewController {
+            let stackView = viewController.createNavigationTitleStack(name: item.name, creationDate: item.created)
+            viewController.navigationItem.titleView = stackView
         }
     }
     
@@ -64,3 +68,4 @@ class ImagePresenter {
         }
     }
 }
+

@@ -5,7 +5,7 @@ protocol ImageViewProtocol: AnyObject {
 }
 
 class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
-    
+        
     private let presenter: ImagePresenter
     private let imageView = UIImageView()
     private let linkButton = UIButton(type: .system)
@@ -24,7 +24,8 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         super.viewDidLoad()
         setupUI()
         presenter.attachView(self)
-        presenter.loadFileDetails()
+        presenter.loadImage()
+        presenter.updateNavigationBar()
         
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
@@ -76,27 +77,8 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         }
     }
     
-    func displayFileDetails(name: String, creationDate: String, previewImage: UIImage?) {
-        let titleLabel = UILabel()
-        titleLabel.text = name
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 14)
-        titleLabel.textColor = .black
-        titleLabel.textAlignment = .center
-        
-        let dateLabel = UILabel()
-        dateLabel.text = creationDate
-        dateLabel.font = UIFont.systemFont(ofSize: 10)
-        dateLabel.textColor = UIColor(red: 158/255, green: 158/255, blue: 158/255, alpha: 1)
-        dateLabel.textAlignment = .center
-        
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, dateLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 4
-        stackView.alignment = .center
-        
-        navigationItem.titleView = stackView
-        
-        imageView.image = previewImage ?? UIImage(systemName: "photo")
+    func displayImage(image: UIImage?) {
+        imageView.image = image ?? UIImage(systemName: "photo")
     }
     
     @objc private func editFile() {

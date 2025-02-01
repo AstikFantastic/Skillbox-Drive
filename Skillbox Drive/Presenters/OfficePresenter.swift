@@ -20,14 +20,17 @@ class OfficePresenter {
     }
     
     func loadPage() {
-        let fileName = item.name
-        if let view = view as? OfficeViewController {
-            view.navigationItem.title = fileName
-        }
         guard let url = URL(string: page.url.absoluteString) else {
             view?.showError(message: "Invalid URL")
             return
         }
         view?.loadURL(url)
+    }
+    
+    func updateNavigationBar() {
+        if let viewController = view as? UIViewController {
+            let stackView = viewController.createNavigationTitleStack(name: item.name, creationDate: item.created)
+            viewController.navigationItem.titleView = stackView
+        }
     }
 }

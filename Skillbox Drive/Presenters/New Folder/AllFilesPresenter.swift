@@ -45,22 +45,6 @@ class AllFilesPresenter {
         guard let size = size else { return "Unknown size" }
         return "\(size / 1_048_576) mb"
     }
-    
-    func formattedCreationDate(from createdString: String?) -> String {
-        guard let createdString = createdString,
-              let createdDate = DateFormatter.date(from: createdString) else {
-            return "Unknown date"
-        }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy HH:mm"
-        return formatter.string(from: createdDate)
-    }
 }
 
-private extension DateFormatter {
-    static func date(from string: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        return formatter.date(from: string)
-    }
-}
+

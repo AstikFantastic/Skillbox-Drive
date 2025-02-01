@@ -20,6 +20,7 @@ class OfficeViewController: UIViewController, OfficeView {
         setupUI()
         presenter.attachView(self)
         presenter.loadPage()
+        presenter.updateNavigationBar()
     }
     
     private func setupUI() {

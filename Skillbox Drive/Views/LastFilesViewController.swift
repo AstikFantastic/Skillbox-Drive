@@ -97,7 +97,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         let item = files[indexPath.row]
         let fileName = item.name
         let fileSize = presenter.formattedFileSize(from: item.size)
-        let creationDate = presenter.formattedCreationDate(from: item.created)
+        let creationDate = DateFormatter.formattedString(from: item.created)
         var fileImage: UIImage?
         
         cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)

@@ -95,7 +95,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         let item = files[indexPath.row]
         let fileName = item.name
         let fileSize = presenter.formattedFileSize(from: item.size)
-        let creationDate = presenter.formattedCreationDate(from: item.created)
+        let creationDate = DateFormatter.formattedString(from: item.created)
         cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
         
         return cell
