@@ -1,0 +1,79 @@
+import UIKit
+
+protocol LastFilesView: AnyObject {
+    func showLoading()
+    func hideLoading()
+    func showAllFiles(_ files: [Items])
+    func showError(_ error: Error)
+}
+
+class LastLoadedFilesPresenter {
+    
+    weak var view: LastFilesView?
+    private let apiService: APIService
+    private let oAuthToken: String
+    
+    init(view: LastFilesView, oAuthToken: String, apiService: APIService) {
+        self.view = view
+        self.oAuthToken = oAuthToken
+        self.apiService = apiService
+    }
+    
+    func fetchLastLoadedFiles(limit: Int = 100, offset: Int = 0, previewSize: String = "25x22", previewCrop: String = "true") {
+        view?.showLoading()
+        apiService.fetchLastLoadedFiles(oAuthToken: oAuthToken, limit: limit, offset: offset, previewSize: previewSize, previewCrop: previewCrop) { [weak self] result in
+            self?.view?.hideLoading()
+            switch result {
+            case .success(let data):
+                self?.view?.showAllFiles(data.items)
+            case .failure(let error):
+                self?.view?.showError(error)
+            }
+        }
+    }
+    
+    func fetchImage(for url: String, completion: @escaping (UIImage?) -> Void) {
+        apiService.fetchImage(from: url) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let image):
+                    completion(image)
+                case .failure(let error):
+                    print("Ошибка загрузки изображения: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    func formattedFileSize(from size: Int?) -> String {
+        guard let size = size else { return "Unknown size" }
+        let mb = Double(size) / 1_048_576
+        if mb < 1 {
+            let kb = Double(size) / 1024
+            return String(format: "%.2f KB", kb)
+        } else if mb >= 1 && mb < 1024 {
+            return String(format: "%.2f MB", mb)
+        } else {
+            let gb = mb / 1024
+            return String(format: "%.2f GB", gb)
+        }
+    }
+    
+    func formattedCreationDate(from createdString: String?) -> String {
+        guard let createdString = createdString,
+              let createdDate = DateFormatter.date(from: createdString) else {
+            return "Unknown date"
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy HH:mm"
+        return formatter.string(from: createdDate)
+    }
+}
+
+private extension DateFormatter {
+    static func date(from string: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        return formatter.date(from: string)
+    }
+}
