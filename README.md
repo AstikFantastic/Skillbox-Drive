@@ -38,11 +38,11 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ### View Detailed File Information  
 ✅ When the user taps on a file in the list, they are redirected to the file view screen.  
 ❌ If the file is not yet downloaded from the server, the user sees the download status.  
+🚧 On the file view screen, the user can see the file name, creation date, and time.  
 ✅ The app supports viewing the following file types:  
   - Images  
   - PDFs (using PDFView)  
   - MS Office files (using WKWebView)
-🚧 On the file view screen, the user can see the file name, creation date, and time.
 ❌ The following actions are available on the file view screen:  
   - Share the file with other apps  
   - Share a link to the file  
