@@ -21,8 +21,8 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 
 ### Authentication  
 ✅ The login screen always appears after onboarding.  
-❌ Using the app without logging in is not allowed.
-(⚠️ After pressing the login button, the app navigates to the TabBar screen with information about the user's Yandex Disk) 
+❌ Using the app without logging in is not allowed.  
+(⚠️ After pressing the login button, the app navigates to the TabBar screen with information about the user's Yandex Disk)
 
 ### View Disk Information  
 ✅ The profile screen displays available information about the current state of the user's disk, including total disk size and used space.  
@@ -33,8 +33,7 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ❌ A loader is shown when the file icon is loading.  
 ❌ The list is paginated.  
 ❌ The list is cached in the database.  
-❌ If there is no network connection, cached files from the database are displayed with a notification to the user.  
-
+❌ If there is no network connection, cached files from the database are displayed with a notification to the user.
 
 ### View Detailed File Information  
 ✅ When the user taps on a file in the list, they are redirected to the file view screen.  
@@ -42,8 +41,8 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ✅ The app supports viewing the following file types:  
   - Images  
   - PDFs (using PDFView)  
-  - MS Office files (using WKWebView)
-🚧 On the file view screen, the user can see the file name, creation date, and time.
+  - MS Office files (using WKWebView)  
+🚧 On the file view screen, the user can see the file name, creation date, and time.  
 ❌ The following actions are available on the file view screen:  
   - Share the file with other apps  
   - Share a link to the file  
@@ -71,6 +70,3 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ❌ Tapping the "Log Out" button in the profile shows a dialog: "Are you sure you want to log out? All local data will be deleted."  
 ❌ If the user confirms, the app logs out and deletes all local data.  
 ❌ After clearing data and on subsequent app launches, the login screen is shown.  
-
-
-
