@@ -21,7 +21,7 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 
 ### Authentication  
 ✅ The login screen always appears after onboarding.  
-❌ Using the app without logging in is not allowed 
+❌ Using the app without logging in is not allowed.
 (⚠️ After pressing the login button, the app navigates to the TabBar screen with information about the user's Yandex Disk) 
 
 ### View Disk Information  
