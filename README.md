@@ -43,6 +43,7 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
   - Images  
   - PDFs (using PDFView)  
   - MS Office files (using WKWebView)
+
 ❌ The following actions are available on the file view screen:  
   - Share the file with other apps  
   - Share a link to the file  
