@@ -23,18 +23,17 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     private func setupUI() {
+        title = "Last loaded files"
         setupActivityIndicator()
         tableView.backgroundColor = .clear
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        
         tableView.register(AllFilesCell.self, forCellReuseIdentifier: AllFilesCell.identifier)
     }
     

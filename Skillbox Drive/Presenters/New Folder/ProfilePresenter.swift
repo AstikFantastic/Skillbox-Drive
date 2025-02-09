@@ -9,7 +9,6 @@ protocol ProfilePresenterProtocol: AnyObject {
     func findAvailableSpace(diskData: ProfileModel) -> String
 }
 
-
 class ProfilePresenter {
     
     weak var view: ProfileViewProtocol?

@@ -21,6 +21,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     private func setupUI() {
+        title = "All files"
         setupActivityIndicator()
         tableView.backgroundColor = .clear
         view.addSubview(tableView)

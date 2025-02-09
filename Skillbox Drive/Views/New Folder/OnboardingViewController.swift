@@ -41,7 +41,6 @@ class OnboardingViewController: UIViewController, OnboardingView {
         presenter?.didTapNext()
     }
     
-    
     func displayPage(image: UIImage, description: String, currentIndex: Int, totalPages: Int) {
         imageView.image = image
         descriptionLabel.text = description

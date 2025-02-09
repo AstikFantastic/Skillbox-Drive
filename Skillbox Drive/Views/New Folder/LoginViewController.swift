@@ -1,8 +1,8 @@
 import UIKit
 import YandexLoginSDK
 
-class LoginViewController: UIViewController, LoginViewProtocol, YandexLoginSDKObserver {
-    
+class LoginViewController: UIViewController, LoginViewProtocol {
+      
     private var logoImage = UIImageView()
     private let button = UIButton()
     private var presenter: LoginPresenter!
@@ -13,14 +13,7 @@ class LoginViewController: UIViewController, LoginViewProtocol, YandexLoginSDKOb
         setupConstraints()
         let router = LoginRouter()
         presenter = LoginPresenter(view: self, router: router)
-        
-        do {
-            try YandexLoginSDK.shared.activate(with: "537838d5d9a1441687edd5d18255c8e6", authorizationStrategy: .webOnly)
-            YandexLoginSDK.shared.add(observer: self)
-            
-        } catch {
-            print("Ошибка активации YandexLoginSDK: \(error.localizedDescription)")
-        }
+        yandexActivate()
     }
     
     private func setupUI() {
@@ -33,38 +26,26 @@ class LoginViewController: UIViewController, LoginViewProtocol, YandexLoginSDKOb
         button.titleLabel?.font = UIFont(name: "Graphik", size: 16)
         button.backgroundColor = UIColor(red: 56/255, green: 63/255, blue: 245/255, alpha: 1)
         button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(yandexAutorizeRun), for: .touchUpInside)
         
         view.addSubview(logoImage)
         view.addSubview(button)
     }
     
-    @objc func loginButtonTapped() {
-        do {
-            try YandexLoginSDK.shared.authorize(with: YandexIdWebViewController(), customValues: nil, authorizationStrategy: .webOnly)
-        } catch {
-            print("Ошибка при запуске авторизации: \(error.localizedDescription)")
-        }
+    func didFinishLogin(with result: Result<LoginResult, any Error>) {
+        presenter.didFinishLogin(with: result)
     }
     
-    func didFinishLogin(with result: Result<LoginResult, Error>) {
-        switch result {
-        case .success(let loginResult):
-            UserDefaults.standard.set(loginResult.token, forKey: "userToken")
-            print("Успешная авторизация, токен сохранен: \(loginResult.token)")
-            navigateToTabBar()
-        case .failure(let error):
-            print("Ошибка авторизации: \(error.localizedDescription)")
-        }
+    func yandexActivate() {
+        presenter.yandexActivate()
     }
     
-    func logOut() {
-        do {
-            try YandexLoginSDK.shared.logout()
-            UserDefaults.standard.removeObject(forKey: "userToken")
-        } catch {
-            print(error.localizedDescription)
-        }
+    @objc func yandexAutorizeRun() {
+        presenter.yandexAutorizeRun()
+    }
+    
+    func yandexLogout() {
+        presenter.yandexLogout()
     }
     
     func navigateToTabBar() {
@@ -75,15 +56,14 @@ class LoginViewController: UIViewController, LoginViewProtocol, YandexLoginSDKOb
 extension LoginViewController {
     private func setupConstraints() {
         logoImage.translatesAutoresizingMaskIntoConstraints = false
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             logoImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 271.05),
             logoImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 90),
             logoImage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -90),
-            logoImage.heightAnchor.constraint(equalToConstant: 168)
-        ])
+            logoImage.heightAnchor.constraint(equalToConstant: 168),
         
-        button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: view.topAnchor, constant: 670),
             button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 27),
             button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -27),
