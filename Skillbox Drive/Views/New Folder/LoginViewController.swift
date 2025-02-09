@@ -1,6 +1,7 @@
 import UIKit
+import YandexLoginSDK
 
-class LoginViewController: UIViewController, LoginViewProtocol {
+class LoginViewController: UIViewController, LoginViewProtocol, YandexLoginSDKObserver {
     
     private var logoImage = UIImageView()
     private let button = UIButton()
@@ -9,15 +10,22 @@ class LoginViewController: UIViewController, LoginViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupConstraints()        
+        setupConstraints()
         let router = LoginRouter()
         presenter = LoginPresenter(view: self, router: router)
-    }
-
-    private func setupUI() {
         
+        do {
+            try YandexLoginSDK.shared.activate(with: "537838d5d9a1441687edd5d18255c8e6", authorizationStrategy: .webOnly)
+            YandexLoginSDK.shared.add(observer: self)
+            
+        } catch {
+            print("Ошибка активации YandexLoginSDK: \(error.localizedDescription)")
+        }
+    }
+    
+    private func setupUI() {
         view.backgroundColor = .white
-        logoImage.image = UIImage(named: "лого") ?? nil
+        logoImage.image = UIImage(named: "лого")
         logoImage.contentMode = .scaleAspectFill
         
         button.setTitle("Войти", for: .normal)
@@ -32,7 +40,31 @@ class LoginViewController: UIViewController, LoginViewProtocol {
     }
     
     @objc func loginButtonTapped() {
-        presenter.handleLogin()
+        do {
+            try YandexLoginSDK.shared.authorize(with: YandexIdWebViewController(), customValues: nil, authorizationStrategy: .webOnly)
+        } catch {
+            print("Ошибка при запуске авторизации: \(error.localizedDescription)")
+        }
+    }
+    
+    func didFinishLogin(with result: Result<LoginResult, Error>) {
+        switch result {
+        case .success(let loginResult):
+            UserDefaults.standard.set(loginResult.token, forKey: "userToken")
+            print("Успешная авторизация, токен сохранен: \(loginResult.token)")
+            navigateToTabBar()
+        case .failure(let error):
+            print("Ошибка авторизации: \(error.localizedDescription)")
+        }
+    }
+    
+    func logOut() {
+        do {
+            try YandexLoginSDK.shared.logout()
+            UserDefaults.standard.removeObject(forKey: "userToken")
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     func navigateToTabBar() {

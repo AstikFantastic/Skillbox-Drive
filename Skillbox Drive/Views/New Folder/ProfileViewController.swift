@@ -1,11 +1,14 @@
 import UIKit
 
-class ProfileViewController: UIViewController, ProfileView {
+protocol ProfileViewProtocol: AnyObject {
+    func showLogoutConfirmation()
+    func showDiskData(_ diskData: ProfileModel)
+    func showError(_ error: Error)
+}
+
+class ProfileViewController: UIViewController, ProfileViewProtocol {
     
     var presenter: ProfilePresenter!
-    
-    let oAuthToken = "y0__wgBEOyZ3QoY95k0IKXpv_gRIYdzi_pi2qSwvmQGmILMWrnnk04"
-    
     
     private let progressLayer = CAShapeLayer()
     private var circlePath: UIBezierPath!
@@ -26,12 +29,22 @@ class ProfileViewController: UIViewController, ProfileView {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        presenter = ProfilePresenter(view: self, oAuthToken: oAuthToken)
-        presenter.fetchDiskData()
+        if let oAuthToken = UserDefaults.standard.string(forKey: "userToken") {
+            let router = Router(navigationController: navigationController!)
+            presenter = ProfilePresenter(view: self, oAuthToken: oAuthToken, router: router)
+            presenter.fetchDiskData()
+        }
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        title = "Profile"
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "ellipsis"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapMoreButton)
+        )
         
         setupCircleProgress()
         
@@ -102,7 +115,7 @@ class ProfileViewController: UIViewController, ProfileView {
         NSLayoutConstraint.activate([
             arrowImage.centerYAnchor.constraint(equalTo: publishedFilesButton.centerYAnchor),
             arrowImage.trailingAnchor.constraint(equalTo: publishedFilesButton.trailingAnchor, constant: -16)
-               ])
+        ])
         
         view.addSubview(publishedFilesButton)
         publishedFilesButton.translatesAutoresizingMaskIntoConstraints = false
@@ -138,6 +151,30 @@ class ProfileViewController: UIViewController, ProfileView {
         }
     }
     
+    @objc func didTapMoreButton() {
+        presenter.didTapMoreButton()
+    }
+    
+    
+    func showLogoutConfirmation() {
+        let alert = UIAlertController(
+            title: "Exit",
+            message: "Are you shure want to logout?",
+            preferredStyle: .alert
+        )
+        
+        let confirmAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
+            self.presenter.logout()
+        }
+        
+        let cancelAction = UIAlertAction(title: "No", style: .cancel)
+        
+        alert.addAction(confirmAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
+    }
+    
     private func setupCircleProgress() {
         let radius: CGFloat = 105.5
         let center = CGPoint(x: view.center.x, y: 250)
@@ -151,7 +188,7 @@ class ProfileViewController: UIViewController, ProfileView {
         )
         
         DispatchQueue.main.async {
-
+            
             self.progressLayer.path = self.circlePath.cgPath
             self.progressLayer.strokeColor = CGColor(red: 158/255, green: 158/255, blue: 158/255, alpha: 1)
             self.progressLayer.fillColor = UIColor.clear.cgColor
@@ -174,7 +211,7 @@ class ProfileViewController: UIViewController, ProfileView {
     }
     
     private func animateCircleProgress(usedPercentage: CGFloat) {
-
+        
         let usedAnimation = CABasicAnimation(keyPath: "strokeEnd")
         usedAnimation.toValue = usedPercentage
         usedAnimation.duration = 1.0

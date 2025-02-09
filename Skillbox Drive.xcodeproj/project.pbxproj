@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		87815CF19DFCE6223418EC0D /* Pods_Skillbox_Drive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E8854040361ECF8762A3D2 /* Pods_Skillbox_Drive.framework */; };
+		881100152D5913CF00B5D676 /* YandexIdWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881100142D5913CF00B5D676 /* YandexIdWebViewController.swift */; };
 		881829A22D36C9C600FB3516 /* LastLoadedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881829A12D36C9C600FB3516 /* LastLoadedFiles.swift */; };
 		881829A62D36CAE800FB3516 /* AllFilesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881829A42D36CAE800FB3516 /* AllFilesCell.swift */; };
 		881829A82D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881829A72D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		881100142D5913CF00B5D676 /* YandexIdWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexIdWebViewController.swift; sourceTree = "<group>"; };
 		881829A12D36C9C600FB3516 /* LastLoadedFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLoadedFiles.swift; sourceTree = "<group>"; };
 		881829A42D36CAE800FB3516 /* AllFilesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesCell.swift; sourceTree = "<group>"; };
 		881829A72D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLoadedFilesPresenter.swift; sourceTree = "<group>"; };
@@ -153,10 +155,10 @@
 				881829A52D36CAE800FB3516 /* Cells */,
 				886EA1002D04C97700FB7A8F /* Routers */,
 				886EA0EC2D04C95F00FB7A8F /* AppDelegate.swift */,
+				886EA0F12D04C95F00FB7A8F /* SceneDelegate.swift */,
 				886EA0ED2D04C95F00FB7A8F /* Assets.xcassets */,
 				886EA0EE2D04C95F00FB7A8F /* Info.plist */,
 				886EA0F02D04C95F00FB7A8F /* LaunchScreen.storyboard */,
-				886EA0F12D04C95F00FB7A8F /* SceneDelegate.swift */,
 				886EA0F22D04C95F00FB7A8F /* Skillbox_Drive.xcdatamodeld */,
 			);
 			path = "Skillbox Drive";
@@ -178,6 +180,7 @@
 		886EA0FE2D04C96B00FB7A8F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				881100142D5913CF00B5D676 /* YandexIdWebViewController.swift */,
 				883775052D3C399900C61981 /* New Folder */,
 				8829130B2D288AA500C58A86 /* LastFilesViewController.swift */,
 				883774FE2D3C342800C61981 /* ImageViewController.swift */,
@@ -349,6 +352,7 @@
 				883775032D3C397B00C61981 /* ImagePresenter.swift in Sources */,
 				882913062D28837200C58A86 /* LoginRouter.swift in Sources */,
 				88BF77662D453EBD00A5D23C /* PDFPresenter.swift in Sources */,
+				881100152D5913CF00B5D676 /* YandexIdWebViewController.swift in Sources */,
 				886EA0FB2D04C95F00FB7A8F /* Skillbox_Drive.xcdatamodeld in Sources */,
 				883775082D3C3A7300C61981 /* Router.swift in Sources */,
 				882913102D288D0A00C58A86 /* APIService.swift in Sources */,

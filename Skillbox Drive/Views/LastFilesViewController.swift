@@ -8,17 +8,16 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     var files: [Items] = []
     let tableView = UITableView()
     
-    
-    let oAuthToken = "y0__wgBEOyZ3QoY95k0IKXpv_gRIYdzi_pi2qSwvmQGmILMWrnnk04"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         let apiService = APIService()
         let navigationController = self.navigationController
-        router = Router(navigationController: navigationController!)
-        presenter = LastLoadedFilesPresenter(view: self, oAuthToken: oAuthToken, apiService: apiService)
-        presenter.fetchLastLoadedFiles()
+        if let oAuthToken = UserDefaults.standard.string(forKey: "userToken") {
+            router = Router(navigationController: navigationController!)
+            presenter = LastLoadedFilesPresenter(view: self, oAuthToken: oAuthToken, apiService: apiService)
+            presenter.fetchLastLoadedFiles()
+        }
         tableView.dataSource = self
         tableView.delegate = self
     }

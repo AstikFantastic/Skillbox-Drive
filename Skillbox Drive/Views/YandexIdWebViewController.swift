@@ -1,11 +1,21 @@
 import UIKit
+import WebKit
 
-class YandexIdWebView: UIViewController {
-
+class YandexIdWebViewController: UIViewController {
+    
+    var webView: WKWebView!
+    var url: URL?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        webView = WKWebView(frame: self.view.bounds)
+        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(webView)
+        
+        if let authorizationURL = url {
+            let request = URLRequest(url: authorizationURL)
+            webView.load(request)
+        }
     }
-
 }

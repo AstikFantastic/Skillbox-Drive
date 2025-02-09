@@ -32,10 +32,12 @@ class AllFilesCell: UITableViewCell {
         
         fileName.font = .systemFont(ofSize: 15)
         fileName.numberOfLines = 1
+        fileName.lineBreakMode = .byTruncatingMiddle
         contentView.addSubview(fileName)
         fileName.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            fileName.leadingAnchor.constraint(equalTo: previewImage.trailingAnchor, constant: 20),
+            fileName.leadingAnchor.constraint(equalTo: previewImage.trailingAnchor, constant: 10),
+            fileName.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             fileName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
         ])
         

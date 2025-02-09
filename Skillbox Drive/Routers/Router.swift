@@ -1,6 +1,7 @@
 import UIKit
 
 class Router {
+    
     private weak var navigationController: UINavigationController?
     
     init(navigationController: UINavigationController) {
@@ -31,5 +32,16 @@ class Router {
         let presenter = OfficePresenter(item: item, page: webPage)
         let webViewController = OfficeViewController(presenter: presenter)
         navigationController?.pushViewController(webViewController, animated: true)
+    }
+    
+    func navigateToLoginScreen() {
+        let loginVC = LoginViewController()
+        let navController = UINavigationController(rootViewController: loginVC)
+        
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = scene.windows.first {
+            window.rootViewController = navController
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
+        }
     }
 }

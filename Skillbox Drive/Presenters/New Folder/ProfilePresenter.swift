@@ -1,20 +1,27 @@
 import UIKit
+import YandexLoginSDK
 
-protocol ProfileView: AnyObject {
-    func showDiskData(_ diskData: ProfileModel)
-    func showError(_ error: Error)
+protocol ProfilePresenterProtocol: AnyObject {
+    func fetchDiskData()
+    func didTapMoreButton()
+    func logout()
+    func formatBtToGb(_ bytes: Int64) -> String
+    func findAvailableSpace(diskData: ProfileModel) -> String
 }
+
 
 class ProfilePresenter {
     
-    weak var view: ProfileView?
+    weak var view: ProfileViewProtocol?
     private let apiService: APIService
     private let oAuthToken: String
+    private let router: Router
     
-    init(view: ProfileView, oAuthToken: String, apiService: APIService = .shared) {
+    init(view: ProfileViewProtocol, oAuthToken: String, apiService: APIService = .shared, router: Router) {
         self.view = view
         self.oAuthToken = oAuthToken
         self.apiService = apiService
+        self.router = router
     }
     
     func fetchDiskData() {
@@ -44,4 +51,19 @@ class ProfilePresenter {
     func findAvailableSpace(diskData: ProfileModel) -> String {
         return formatBtToGb(Int64(diskData.totalSpace) - Int64(diskData.usedSpace))
     }
+    
+    func didTapMoreButton() {
+        view?.showLogoutConfirmation()
+    }
+    
+    func logout() {
+        do {
+            UserDefaults.standard.removeObject(forKey: "userToken")
+            try YandexLoginSDK.shared.logout()
+        } catch {
+            print("Ошибка выхода: \(error.localizedDescription)")
+        }
+        router.navigateToLoginScreen()
+    }
 }
+

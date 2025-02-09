@@ -7,17 +7,15 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
     var files: [Item] = []
     let tableView = UITableView()
     
-    let oAuthToken = "y0__wgBEOyZ3QoY95k0IKXpv_gRIYdzi_pi2qSwvmQGmILMWrnnk04"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        let apiService = APIService()
-
-        presenter = AllFilesPresenter(view: self, oAuthToken: oAuthToken, apiService: apiService)
-
-        presenter.fetchAllFiles()
-  
+        
+        if let oAuthToken = UserDefaults.standard.string(forKey: "userToken") {
+            let apiService = APIService()
+            presenter = AllFilesPresenter(view: self, oAuthToken: oAuthToken, apiService: apiService)
+            presenter.fetchAllFiles()
+        }
         tableView.dataSource = self
         tableView.delegate = self
     }
