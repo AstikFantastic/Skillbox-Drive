@@ -17,12 +17,11 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 
 ### Onboarding  
 ✅ The onboarding screen is displayed immediately upon the first launch of the app.  
-(⚠️ To show the onboarding again, you need to switch the app to the background in the simulator and restart the project)
+(⚠️ To show the onboarding again, you need to delete the app from the simulator and restart the project)
 
 ### Authentication  
 ✅ The login screen always appears after onboarding.  
-❌ Using the app without logging in is not allowed.  
-(⚠️ After pressing the login button, the app navigates to the TabBar screen with information about the user's Yandex Disk)
+✅ Using the app without logging in is not allowed.  
 
 ### View Disk Information  
 ✅ The profile screen displays available information about the current state of the user's disk, including total disk size and used space.  
@@ -38,7 +37,7 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ### View Detailed File Information  
 ✅ When the user taps on a file in the list, they are redirected to the file view screen.  
 ❌ If the file is not yet downloaded from the server, the user sees the download status.  
-🚧 On the file view screen, the user can see the file name, creation date, and time.  
+✅ On the file view screen, the user can see the file name, creation date, and time.  
 ✅ The app supports viewing the following file types:  
   - Images  
   - PDFs (using PDFView)  
@@ -68,6 +67,6 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ❌ Where possible, information about the retrieved files and directories is cached.  
 
 ### Log Out  
-❌ Tapping the "Log Out" button in the profile shows a dialog: "Are you sure you want to log out? All local data will be deleted."  
+✅ Tapping the "Log Out" button in the profile shows a dialog: "Are you sure you want to log out? All local data will be deleted."  
 ❌ If the user confirms, the app logs out and deletes all local data.  
-❌ After clearing data and on subsequent app launches, the login screen is shown.  
+🚧 After clearing data and on subsequent app launches, the login screen is shown.  
