@@ -23,7 +23,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     private func setupUI() {
-        title = "Last loaded files"
+        title = "Last loaded"
         setupActivityIndicator()
         tableView.backgroundColor = .clear
         view.addSubview(tableView)
@@ -119,11 +119,11 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         
         switch item.mimeType {
         case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            fileImage = UIImage(named: "excel")  // Замените на имя изображения для Excel
+            fileImage = UIImage(named: "excel")
         case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            fileImage = UIImage(named: "word")  // Замените на имя изображения для Word
+            fileImage = UIImage(named: "word")
         case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-            fileImage = UIImage(named: "powerpoint")  // Замените на имя изображения для PowerPoint
+            fileImage = UIImage(named: "powerpoint")
         case "application/pdf":
             fileImage = UIImage(named: "pdf")
         case "video/avi", "video/mp4", "video/m4v","video/mov", "video/mpg", "video/mpeg", "video/wmv":
@@ -133,7 +133,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         case "audio/mpeg":
             fileImage = UIImage(named: "music")
         default:
-            fileImage = UIImage(named: "Folder")  // Стандартное изображение для других типов
+            fileImage = UIImage(named: "Folder")
         }
         cell.setImage(fileImage)
         

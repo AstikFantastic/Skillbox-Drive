@@ -1,7 +1,7 @@
 import UIKit
 
 protocol ProfileViewProtocol: AnyObject {
-    func showLogoutConfirmation()
+    func showLogoutAlert()
     func showDiskData(_ diskData: ProfileModel)
     func showError(_ error: Error)
 }
@@ -35,7 +35,6 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
     
     private func setupUI() {
         title = "Profile"
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "ellipsis"),
             style: .plain,
@@ -44,7 +43,6 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
         )
         
         setupCircleProgress()
-        
         totalSpaceLabel.font = UIFont.boldSystemFont(ofSize: 16)
         totalSpaceLabel.textColor = UIColor.darkGray
         totalSpaceLabel.textAlignment = .center
@@ -133,13 +131,26 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
     @objc func didTapMoreButton() {
         presenter.didTapMoreButton()
     }
+    
+    func showLogoutAlert() {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let titleAction = UIAlertAction(title: "Profile", style: .default, handler: nil)
+        titleAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
+        let deleteAction = UIAlertAction(title: "Log Out", style: .destructive) { _ in
+            self.showLogoutConfirmation()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(titleAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        if let firstAction = alert.actions.first {
+            firstAction.isEnabled = false
+        }
+        present(alert, animated: true)
+    }
 
-    func showLogoutConfirmation() {
-        let alert = UIAlertController(
-            title: "Exit",
-            message: "Are you shure want to logout?",
-            preferredStyle: .alert
-        )
+    private func showLogoutConfirmation() {
+        let alert = UIAlertController(title: "Exit", message: "Are you sure you want to log out?", preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
             self.presenter.logout()
         }
@@ -181,13 +192,11 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
     }
     
     private func animateCircleProgress(usedPercentage: CGFloat) {
-        
         let usedAnimation = CABasicAnimation(keyPath: "strokeEnd")
         usedAnimation.toValue = usedPercentage
         usedAnimation.duration = 1.0
         usedAnimation.fillMode = .forwards
         usedAnimation.isRemovedOnCompletion = false
-        
         self.usedLayer.add(usedAnimation, forKey: "usedProgress")
     }
     

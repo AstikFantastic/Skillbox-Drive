@@ -31,6 +31,10 @@
 		88BF77682D453ECF00A5D23C /* OfficePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77672D453ECF00A5D23C /* OfficePresenter.swift */; };
 		88BF776A2D453EDD00A5D23C /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77692D453EDD00A5D23C /* PDFModel.swift */; };
 		88BF776C2D453EE600A5D23C /* OfficeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF776B2D453EE600A5D23C /* OfficeModel.swift */; };
+		88E595072D5D10860016E224 /* AllFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595022D5D10860016E224 /* AllFilesViewController.swift */; };
+		88E595082D5D10860016E224 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595032D5D10860016E224 /* LoginViewController.swift */; };
+		88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595042D5D10860016E224 /* OnboardingViewController.swift */; };
+		88E5950A2D5D10860016E224 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595052D5D10860016E224 /* ProfileViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +63,10 @@
 		88BF77672D453ECF00A5D23C /* OfficePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficePresenter.swift; sourceTree = "<group>"; };
 		88BF77692D453EDD00A5D23C /* PDFModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFModel.swift; sourceTree = "<group>"; };
 		88BF776B2D453EE600A5D23C /* OfficeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeModel.swift; sourceTree = "<group>"; };
+		88E595022D5D10860016E224 /* AllFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesViewController.swift; sourceTree = "<group>"; };
+		88E595032D5D10860016E224 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		88E595042D5D10860016E224 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		88E595052D5D10860016E224 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		88FD585A2D2767C40062FF8C /* Skillbox Drive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Skillbox Drive.entitlements"; sourceTree = "<group>"; };
 		8C8B75FF818C25CFFCF208DF /* Pods-Skillbox Drive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Skillbox Drive.release.xcconfig"; path = "Target Support Files/Pods-Skillbox Drive/Pods-Skillbox Drive.release.xcconfig"; sourceTree = "<group>"; };
 		93E8854040361ECF8762A3D2 /* Pods_Skillbox_Drive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Skillbox_Drive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,11 +80,6 @@
 			sourceTree = "<group>";
 		};
 		883775042D3C398500C61981 /* New Folder */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "New Folder";
-			sourceTree = "<group>";
-		};
-		883775052D3C399900C61981 /* New Folder */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "New Folder";
 			sourceTree = "<group>";
@@ -181,7 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				881100142D5913CF00B5D676 /* YandexIdWebViewController.swift */,
-				883775052D3C399900C61981 /* New Folder */,
+				88E595062D5D10860016E224 /* New Folder */,
 				8829130B2D288AA500C58A86 /* LastFilesViewController.swift */,
 				883774FE2D3C342800C61981 /* ImageViewController.swift */,
 				88BF77472D40270A00A5D23C /* PDFViewComtroller.swift */,
@@ -219,6 +222,17 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		88E595062D5D10860016E224 /* New Folder */ = {
+			isa = PBXGroup;
+			children = (
+				88E595042D5D10860016E224 /* OnboardingViewController.swift */,
+				88E595022D5D10860016E224 /* AllFilesViewController.swift */,
+				88E595032D5D10860016E224 /* LoginViewController.swift */,
+				88E595052D5D10860016E224 /* ProfileViewController.swift */,
+			);
+			path = "New Folder";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -239,7 +253,6 @@
 			fileSystemSynchronizedGroups = (
 				880AD68A2D4E997E008AD83D /* Extensions */,
 				883775042D3C398500C61981 /* New Folder */,
-				883775052D3C399900C61981 /* New Folder */,
 				883775062D3C39B300C61981 /* New Folder */,
 			);
 			name = "Skillbox Drive";
@@ -346,6 +359,10 @@
 				8829130C2D288AA500C58A86 /* LastFilesViewController.swift in Sources */,
 				886EA0FA2D04C95F00FB7A8F /* SceneDelegate.swift in Sources */,
 				8837750C2D3C590600C61981 /* ImageModel.swift in Sources */,
+				88E595072D5D10860016E224 /* AllFilesViewController.swift in Sources */,
+				88E595082D5D10860016E224 /* LoginViewController.swift in Sources */,
+				88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */,
+				88E5950A2D5D10860016E224 /* ProfileViewController.swift in Sources */,
 				883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */,
 				88BF77482D40270A00A5D23C /* PDFViewComtroller.swift in Sources */,
 				881829A22D36C9C600FB3516 /* LastLoadedFiles.swift in Sources */,
@@ -385,9 +402,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Skillbox Drive/Skillbox Drive.entitlements";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 94BBMDY9VT;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Skillbox Drive/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -415,9 +433,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Skillbox Drive/Skillbox Drive.entitlements";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 94BBMDY9VT;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Skillbox Drive/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

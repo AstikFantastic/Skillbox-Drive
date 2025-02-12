@@ -5,7 +5,7 @@ protocol ImageViewProtocol: AnyObject {
 }
 
 class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
-        
+    
     private let presenter: ImagePresenter
     private let imageView = UIImageView()
     private let linkButton = UIButton(type: .system)
@@ -43,7 +43,7 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         linkButton.setImage(UIImage(named: "link"), for: .normal)
         linkButton.tintColor = .black
         linkButton.translatesAutoresizingMaskIntoConstraints = false
-        linkButton.addTarget(self, action: #selector(editFile), for: .touchUpInside)
+        linkButton.addTarget(self, action: #selector(shareFoto), for: .touchUpInside)
         
         deleteButton.setImage(UIImage(named: "trash"), for: .normal)
         deleteButton.tintColor = .black
@@ -55,8 +55,8 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         view.addSubview(deleteButton)
         
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 1),
-            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 1),
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             
             linkButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
@@ -81,11 +81,35 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         imageView.image = image ?? UIImage(systemName: "photo")
     }
     
-    @objc private func editFile() {
-        print("Edit button tapped.")
+    @objc private func shareFoto() {
+        guard let image = imageView.image  else { return }
+        let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        present(activityController, animated: true)
     }
     
     @objc private func deleteFile() {
-        print("Delete button tapped.")
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let titleAction = UIAlertAction(title: "Current image will be delete", style: .default, handler: nil)
+        titleAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
+        let deleteAction = UIAlertAction(title: "Delete image", style: .destructive) { _ in
+            self.deleteImage()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(titleAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        
+        if let firstAction = alert.actions.first {
+            firstAction.isEnabled = false
+        }
+        present(alert, animated: true)
+    }
+    
+    private func deleteImage() {
+        print("Изображение удалено")
     }
 }
+
+
+

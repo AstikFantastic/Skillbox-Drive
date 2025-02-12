@@ -52,7 +52,7 @@ class ProfilePresenter {
     }
     
     func didTapMoreButton() {
-        view?.showLogoutConfirmation()
+        view?.showLogoutAlert()
     }
     
     func logout() {

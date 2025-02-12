@@ -28,7 +28,7 @@ class OnboardingViewController: UIViewController, OnboardingView {
         descriptionLabel.font = UIFont(name: "Graphik", size: 17)
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
-        nextButton.setTitle("Далее", for: .normal)
+        nextButton.setTitle("Next", for: .normal)
         nextButton.layer.cornerRadius = 10
         nextButton.backgroundColor = UIColor(red: 56/255, green: 63/255, blue: 245/255, alpha: 1)
         nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
