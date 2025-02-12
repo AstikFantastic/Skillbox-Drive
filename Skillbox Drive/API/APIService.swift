@@ -43,7 +43,7 @@ class APIService {
     }
     
     
-    func fetchAllFiles(oAuthToken: String, limit: Int = 1, offset: Int = 0, previewSize: String = "S", previewCrop: String = "1", completion: @escaping (Result<AllFilesModel, Error>) -> Void) {
+    func fetchAllFiles(oAuthToken: String, limit: Int = 1, offset: Int = 0, previewSize: String = "S", previewCrop: String = "1", completion: @escaping (Result<LastLoadedFiles, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources/files") else {
             completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -88,7 +88,7 @@ class APIService {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let allFilesModel = try decoder.decode(AllFilesModel.self, from: data)
+                let allFilesModel = try decoder.decode(LastLoadedFiles.self, from: data)
                 completion(.success(allFilesModel))
             } catch {
                 completion(.failure(error))

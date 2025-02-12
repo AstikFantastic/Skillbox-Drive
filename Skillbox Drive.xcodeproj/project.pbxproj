@@ -16,7 +16,6 @@
 		8829130C2D288AA500C58A86 /* LastFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8829130B2D288AA500C58A86 /* LastFilesViewController.swift */; };
 		882913102D288D0A00C58A86 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8829130F2D288D0A00C58A86 /* APIService.swift */; };
 		883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883774FE2D3C342800C61981 /* ImageViewController.swift */; };
-		883775012D3C355D00C61981 /* FileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775002D3C355D00C61981 /* FileModel.swift */; };
 		883775032D3C397B00C61981 /* ImagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775022D3C397B00C61981 /* ImagePresenter.swift */; };
 		883775082D3C3A7300C61981 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775072D3C3A7300C61981 /* Router.swift */; };
 		8837750C2D3C590600C61981 /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837750B2D3C590600C61981 /* ImageModel.swift */; };
@@ -35,6 +34,10 @@
 		88E595082D5D10860016E224 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595032D5D10860016E224 /* LoginViewController.swift */; };
 		88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595042D5D10860016E224 /* OnboardingViewController.swift */; };
 		88E5950A2D5D10860016E224 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595052D5D10860016E224 /* ProfileViewController.swift */; };
+		88E595142D5D28C70016E224 /* AllFilesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E5950F2D5D28C70016E224 /* AllFilesPresenter.swift */; };
+		88E595152D5D28C70016E224 /* LoginPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595102D5D28C70016E224 /* LoginPresenter.swift */; };
+		88E595162D5D28C70016E224 /* OnboardingPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595112D5D28C70016E224 /* OnboardingPresenter.swift */; };
+		88E595172D5D28C70016E224 /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595122D5D28C70016E224 /* ProfilePresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,7 +49,6 @@
 		8829130B2D288AA500C58A86 /* LastFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFilesViewController.swift; sourceTree = "<group>"; };
 		8829130F2D288D0A00C58A86 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		883774FE2D3C342800C61981 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
-		883775002D3C355D00C61981 /* FileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileModel.swift; sourceTree = "<group>"; };
 		883775022D3C397B00C61981 /* ImagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePresenter.swift; sourceTree = "<group>"; };
 		883775072D3C3A7300C61981 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		8837750B2D3C590600C61981 /* ImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
@@ -67,6 +69,10 @@
 		88E595032D5D10860016E224 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		88E595042D5D10860016E224 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		88E595052D5D10860016E224 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		88E5950F2D5D28C70016E224 /* AllFilesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesPresenter.swift; sourceTree = "<group>"; };
+		88E595102D5D28C70016E224 /* LoginPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPresenter.swift; sourceTree = "<group>"; };
+		88E595112D5D28C70016E224 /* OnboardingPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPresenter.swift; sourceTree = "<group>"; };
+		88E595122D5D28C70016E224 /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
 		88FD585A2D2767C40062FF8C /* Skillbox Drive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Skillbox Drive.entitlements"; sourceTree = "<group>"; };
 		8C8B75FF818C25CFFCF208DF /* Pods-Skillbox Drive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Skillbox Drive.release.xcconfig"; path = "Target Support Files/Pods-Skillbox Drive/Pods-Skillbox Drive.release.xcconfig"; sourceTree = "<group>"; };
 		93E8854040361ECF8762A3D2 /* Pods_Skillbox_Drive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Skillbox_Drive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,11 +83,6 @@
 		880AD68A2D4E997E008AD83D /* Extensions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		883775042D3C398500C61981 /* New Folder */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "New Folder";
 			sourceTree = "<group>";
 		};
 		883775062D3C39B300C61981 /* New Folder */ = {
@@ -172,7 +173,6 @@
 			children = (
 				883775062D3C39B300C61981 /* New Folder */,
 				881829A12D36C9C600FB3516 /* LastLoadedFiles.swift */,
-				883775002D3C355D00C61981 /* FileModel.swift */,
 				8837750B2D3C590600C61981 /* ImageModel.swift */,
 				88BF77692D453EDD00A5D23C /* PDFModel.swift */,
 				88BF776B2D453EE600A5D23C /* OfficeModel.swift */,
@@ -196,7 +196,7 @@
 		886EA0FF2D04C97100FB7A8F /* Presenters */ = {
 			isa = PBXGroup;
 			children = (
-				883775042D3C398500C61981 /* New Folder */,
+				88E595132D5D28C70016E224 /* New Folder */,
 				881829A72D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift */,
 				883775022D3C397B00C61981 /* ImagePresenter.swift */,
 				88BF77652D453EBC00A5D23C /* PDFPresenter.swift */,
@@ -226,9 +226,20 @@
 			isa = PBXGroup;
 			children = (
 				88E595042D5D10860016E224 /* OnboardingViewController.swift */,
-				88E595022D5D10860016E224 /* AllFilesViewController.swift */,
 				88E595032D5D10860016E224 /* LoginViewController.swift */,
 				88E595052D5D10860016E224 /* ProfileViewController.swift */,
+				88E595022D5D10860016E224 /* AllFilesViewController.swift */,
+			);
+			path = "New Folder";
+			sourceTree = "<group>";
+		};
+		88E595132D5D28C70016E224 /* New Folder */ = {
+			isa = PBXGroup;
+			children = (
+				88E595112D5D28C70016E224 /* OnboardingPresenter.swift */,
+				88E595102D5D28C70016E224 /* LoginPresenter.swift */,
+				88E595122D5D28C70016E224 /* ProfilePresenter.swift */,
+				88E5950F2D5D28C70016E224 /* AllFilesPresenter.swift */,
 			);
 			path = "New Folder";
 			sourceTree = "<group>";
@@ -252,7 +263,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				880AD68A2D4E997E008AD83D /* Extensions */,
-				883775042D3C398500C61981 /* New Folder */,
 				883775062D3C39B300C61981 /* New Folder */,
 			);
 			name = "Skillbox Drive";
@@ -363,6 +373,10 @@
 				88E595082D5D10860016E224 /* LoginViewController.swift in Sources */,
 				88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */,
 				88E5950A2D5D10860016E224 /* ProfileViewController.swift in Sources */,
+				88E595142D5D28C70016E224 /* AllFilesPresenter.swift in Sources */,
+				88E595152D5D28C70016E224 /* LoginPresenter.swift in Sources */,
+				88E595162D5D28C70016E224 /* OnboardingPresenter.swift in Sources */,
+				88E595172D5D28C70016E224 /* ProfilePresenter.swift in Sources */,
 				883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */,
 				88BF77482D40270A00A5D23C /* PDFViewComtroller.swift in Sources */,
 				881829A22D36C9C600FB3516 /* LastLoadedFiles.swift in Sources */,
@@ -377,7 +391,6 @@
 				881829A82D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift in Sources */,
 				88BF77682D453ECF00A5D23C /* OfficePresenter.swift in Sources */,
 				88BF776A2D453EDD00A5D23C /* PDFModel.swift in Sources */,
-				883775012D3C355D00C61981 /* FileModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

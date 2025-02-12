@@ -6,13 +6,15 @@ protocol ImageViewProtocol: AnyObject {
 
 class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     
+    private let item: Items
     private let presenter: ImagePresenter
     private let imageView = UIImageView()
     private let linkButton = UIButton(type: .system)
     private let deleteButton = UIButton(type: .system)
     
-    init(presenter: ImagePresenter) {
+    init(presenter: ImagePresenter, item: Items) {
         self.presenter = presenter
+        self.item = item
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -35,6 +37,7 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     
     private func setupUI() {
         view.backgroundColor = .white
+        tabBarController?.isTabBarHidden = true
         
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -77,6 +80,11 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         }
     }
     
+    func updateNavigationBar() {
+        let stackView = createNavigationTitleStack(name: item.name, creationDate: item.created)
+        navigationItem.titleView = stackView
+    }
+    
     func displayImage(image: UIImage?) {
         imageView.image = image ?? UIImage(systemName: "photo")
     }
@@ -89,17 +97,15 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     
     @objc private func deleteFile() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let titleAction = UIAlertAction(title: "Current image will be delete", style: .default, handler: nil)
+        let titleAction = UIAlertAction(title: "Current image will be deleted", style: .default, handler: nil)
         titleAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
         let deleteAction = UIAlertAction(title: "Delete image", style: .destructive) { _ in
             self.deleteImage()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
         alert.addAction(titleAction)
         alert.addAction(deleteAction)
         alert.addAction(cancelAction)
-        
         if let firstAction = alert.actions.first {
             firstAction.isEnabled = false
         }

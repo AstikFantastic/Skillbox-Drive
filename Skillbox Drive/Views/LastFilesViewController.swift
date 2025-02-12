@@ -24,6 +24,10 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     
     private func setupUI() {
         title = "Last loaded"
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        navigationItem.backBarButtonItem = backButton
+
         setupActivityIndicator()
         tableView.backgroundColor = .clear
         view.addSubview(tableView)
@@ -96,46 +100,10 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         let fileName = item.name
         let fileSize = presenter.formattedFileSize(from: item.size)
         let creationDate = DateFormatter.formattedString(from: item.created)
-        var fileImage: UIImage?
         
         cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
         
-        if item.mediaType == "image" {
-            if let previewURL = item.file {
-                print("Attempting to load preview from URL: \(previewURL)")
-                presenter.fetchImage(for: previewURL) { image in
-                    if image != nil {
-                        print("Successfully loaded image from \(previewURL)")
-                    } else {
-                        print("Failed to load image from \(previewURL)")
-                    }
-                    cell.setImage(image)
-                }
-            } else {
-                print("Preview URL is missing for item: \(item)")
-                cell.setImage(nil)
-            }
-        }
-        
-        switch item.mimeType {
-        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            fileImage = UIImage(named: "excel")
-        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            fileImage = UIImage(named: "word")
-        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-            fileImage = UIImage(named: "powerpoint")
-        case "application/pdf":
-            fileImage = UIImage(named: "pdf")
-        case "video/avi", "video/mp4", "video/m4v","video/mov", "video/mpg", "video/mpeg", "video/wmv":
-            fileImage = UIImage(named: "video")
-        case "application/x-rar":
-            fileImage = UIImage(named: "rar")
-        case "audio/mpeg":
-            fileImage = UIImage(named: "music")
-        default:
-            fileImage = UIImage(named: "Folder")
-        }
-        cell.setImage(fileImage)
+        cell.setImage(for: item)
         
         return cell
     }

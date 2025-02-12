@@ -1,17 +1,15 @@
 import UIKit
 import PDFKit
 
-protocol PDFViewProtocol: AnyObject {
-    func displayPDF(document: PDFDocument)
-    func showError(message: String)
-}
-
 class PDFViewController: UIViewController, PDFViewProtocol {
+    
+    private let item: Items
     private let presenter: PDFPresenter
     private var pdfView: PDFView!
 
-    init(presenter: PDFPresenter) {
+    init(presenter: PDFPresenter, item: Items) {
         self.presenter = presenter
+        self.item = item
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -35,6 +33,11 @@ class PDFViewController: UIViewController, PDFViewProtocol {
 
     func displayPDF(document: PDFDocument) {
         pdfView.document = document
+    }
+    
+    func updateNavigationBar() {
+        let stackView = createNavigationTitleStack(name: item.name, creationDate: item.created)
+        navigationItem.titleView = stackView
     }
 
     func showError(message: String) {

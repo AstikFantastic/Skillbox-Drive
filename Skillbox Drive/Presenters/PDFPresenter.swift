@@ -1,6 +1,12 @@
 import UIKit
 import PDFKit
 
+protocol PDFViewProtocol: AnyObject {
+    func displayPDF(document: PDFDocument)
+    func showError(message: String)
+    func updateNavigationBar()
+}
+
 class PDFPresenter {
     private let item: Items
     private let pdfFile: PDFModel
@@ -24,9 +30,6 @@ class PDFPresenter {
     }
     
     func updateNavigationBar() {
-        if let viewController = view as? UIViewController {
-            let stackView = viewController.createNavigationTitleStack(name: item.name, creationDate: item.created)
-            viewController.navigationItem.titleView = stackView
-        }
+        view?.updateNavigationBar()
     }
 }

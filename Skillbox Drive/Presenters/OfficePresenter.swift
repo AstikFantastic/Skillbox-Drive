@@ -3,6 +3,7 @@ import UIKit
 protocol OfficeView: AnyObject {
     func loadURL(_ url: URL)
     func showError(message: String)
+    func updateNavigationBar()
 }
 
 class OfficePresenter {
@@ -28,9 +29,6 @@ class OfficePresenter {
     }
     
     func updateNavigationBar() {
-        if let viewController = view as? UIViewController {
-            let stackView = viewController.createNavigationTitleStack(name: item.name, creationDate: item.created)
-            viewController.navigationItem.titleView = stackView
-        }
+        view?.updateNavigationBar()
     }
 }

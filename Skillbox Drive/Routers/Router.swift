@@ -10,7 +10,7 @@ class Router {
     
     func navigateToFileDetail(with item: Items) {
         let imagePresenter = ImagePresenter(item: item, apiService: APIService())
-        let imageViewController = ImageViewController(presenter: imagePresenter)
+        let imageViewController = ImageViewController(presenter: imagePresenter, item: item)
         navigationController?.pushViewController(imageViewController, animated: true)
     }
     
@@ -20,7 +20,7 @@ class Router {
         }
         let pdfPage = PDFModel(name: item.name, fileURL: fileURL)
         let pdfPresenter = PDFPresenter(item: item, pdfFile: pdfPage)
-        let pdfViewController = PDFViewController(presenter: pdfPresenter)
+        let pdfViewController = PDFViewController(presenter: pdfPresenter, item: item)
         navigationController?.pushViewController(pdfViewController, animated: true)
     }
     
@@ -30,7 +30,7 @@ class Router {
         }
         let webPage = OfficeModel(name: item.name, url: fileURL)
         let presenter = OfficePresenter(item: item, page: webPage)
-        let webViewController = OfficeViewController(presenter: presenter)
+        let webViewController = OfficeViewController(presenter: presenter, item: item)
         navigationController?.pushViewController(webViewController, animated: true)
     }
     

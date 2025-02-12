@@ -2,6 +2,7 @@ import UIKit
 
 protocol FileDetailView: AnyObject {
     func displayImage(image: UIImage?)
+    func updateNavigationBar() 
 }
 
 protocol ImagePresenterProtocol: AnyObject {
@@ -47,10 +48,7 @@ class ImagePresenter {
     }
     
     func updateNavigationBar() {
-        if let viewController = view as? UIViewController {
-            let stackView = viewController.createNavigationTitleStack(name: item.name, creationDate: item.created)
-            viewController.navigationItem.titleView = stackView
-        }
+        view?.updateNavigationBar()
     }
     
     func onImagetapped() {

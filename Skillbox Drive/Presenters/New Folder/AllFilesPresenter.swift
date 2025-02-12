@@ -3,7 +3,7 @@ import UIKit
 protocol FilesView: AnyObject {
     func showLoading()
     func hideLoading()
-    func showAllFiles(_ files: [Item])
+    func showAllFiles(_ files: [Items])
     func showError(_ error: Error)
 }
 
@@ -19,7 +19,7 @@ class AllFilesPresenter {
         self.apiService = apiService
     }
     
-    func fetchAllFiles(limit: Int = 10, offset: Int = 0) {
+    func fetchAllFiles(limit: Int = 100, offset: Int = 0) {
         view?.showLoading()
         apiService.fetchAllFiles(oAuthToken: oAuthToken, limit: limit, offset: offset) { [weak self] result in
             self?.view?.hideLoading()
@@ -32,18 +32,18 @@ class AllFilesPresenter {
         }
     }
     
-    func formatBtToMb(_ bytes: Int64) -> String {
-        let mb = Double(bytes) / 1_048_576
-        if mb.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(format: "%.0f", mb)
-        } else {
-            return String(format: "%.2f", mb)
-        }
-    }
-    
     func formattedFileSize(from size: Int?) -> String {
         guard let size = size else { return "Unknown size" }
-        return "\(size / 1_048_576) mb"
+        let mb = Double(size) / 1_048_576
+        if mb < 1 {
+            let kb = Double(size) / 1024
+            return String(format: "%.2f KB", kb)
+        } else if mb >= 1 && mb < 1024 {
+            return String(format: "%.2f MB", mb)
+        } else {
+            let gb = mb / 1024
+            return String(format: "%.2f GB", gb)
+        }
     }
 }
 

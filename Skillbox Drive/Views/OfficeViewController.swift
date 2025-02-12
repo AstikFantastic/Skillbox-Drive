@@ -5,8 +5,10 @@ class OfficeViewController: UIViewController, OfficeView {
     
     private let presenter: OfficePresenter
     private var webView: WKWebView!
+    private let item: Items
     
-    init(presenter: OfficePresenter) {
+    init(presenter: OfficePresenter, item: Items) {
+        self.item = item
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
@@ -25,10 +27,12 @@ class OfficeViewController: UIViewController, OfficeView {
     
     private func setupUI() {
         view.backgroundColor = .white
+        
         let configuration = WKWebViewConfiguration()
         let preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = true
         configuration.defaultWebpagePreferences = preferences
+        
         webView = WKWebView(frame: .zero, configuration: configuration)
         webView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(webView)
@@ -51,4 +55,11 @@ class OfficeViewController: UIViewController, OfficeView {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+    func updateNavigationBar() {
+        let stackView = createNavigationTitleStack(name: item.name, creationDate: item.created)
+        navigationItem.titleView = stackView
+    }
+    
+  
 }

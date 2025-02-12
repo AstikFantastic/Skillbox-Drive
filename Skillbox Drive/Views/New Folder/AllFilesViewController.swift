@@ -2,9 +2,10 @@ import UIKit
 
 class AllFilesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FilesView {
     
+    
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var presenter: AllFilesPresenter!
-    var files: [Item] = []
+    var files: [Items] = []
     let tableView = UITableView()
     
     override func viewDidLoad() {
@@ -65,10 +66,14 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    func showAllFiles(_ files: [Item]) {
+    func showAllFiles(_ files: [Items]) {
         DispatchQueue.main.async { [weak self] in
-            self?.files = files
-            self?.tableView.reloadData()
+            if files.isEmpty {
+                print("No files found.")
+            } else {
+                self?.files = files
+                self?.tableView.reloadData()
+            }
         }
     }
     
@@ -96,6 +101,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         let fileSize = presenter.formattedFileSize(from: item.size)
         let creationDate = DateFormatter.formattedString(from: item.created)
         cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
+        cell.setImage(for: item)
         
         return cell
     }

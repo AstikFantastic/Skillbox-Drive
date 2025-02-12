@@ -32,19 +32,6 @@ class LastLoadedFilesPresenter {
         }
     }
     
-    func fetchImage(for url: String, completion: @escaping (UIImage?) -> Void) {
-        apiService.fetchImage(from: url) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let image):
-                    completion(image)
-                case .failure(let error):
-                    print("Ошибка загрузки изображения: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
-    
     func formattedFileSize(from size: Int?) -> String {
         guard let size = size else { return "Unknown size" }
         let mb = Double(size) / 1_048_576
