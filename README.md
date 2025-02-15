@@ -29,7 +29,7 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 
 ### View Recently Uploaded Files  
 ✅ A list of the most recently uploaded files is displayed. For each file, the following information is shown: icon or preview, name, upload date and time, and size.  
-❌ A loader is shown when the file icon is loading.  
+✅ A loader is shown when the file icon is loading.  
 ❌ The list is paginated.  
 ❌ The list is cached in the database.  
 ❌ If there is no network connection, cached files from the database are displayed with a notification to the user.
@@ -43,14 +43,14 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
   - PDFs (using PDFView)  
   - MS Office files (using WKWebView)
 
-❌ The following actions are available on the file view screen:  
-  - Share the file with other apps  
-  - Share a link to the file  
-  - Delete the file  
+🚧 The following actions are available on the file view screen:  
+  - Share the file with other apps
+  - Share a link to the file
+  - Delete the file 
   - Rename the file  
 
 ### Share a Link to a File  
-❌ On the file view screen, the user can tap the "Share" button in the toolbar.  
+✅ On the file view screen, the user can tap the "Share" button in the toolbar.  
 ❌ A link to the file is generated, which can be shared with other apps.  
 
 ### View Files and Directories List  
@@ -68,5 +68,5 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 
 ### Log Out  
 ✅ Tapping the "Log Out" button in the profile shows a dialog: "Are you sure you want to log out? All local data will be deleted."  
-❌ If the user confirms, the app logs out and deletes all local data.  
+🚧 If the user confirms, the app logs out and deletes all local data.  
 🚧 After clearing data and on subsequent app launches, the login screen is shown.  
