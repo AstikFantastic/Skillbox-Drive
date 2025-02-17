@@ -44,4 +44,9 @@ class Router {
             UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
         }
     }
+    
+    func navigeteToPublishedFiles() {
+        let vc = PublishedFilesViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }

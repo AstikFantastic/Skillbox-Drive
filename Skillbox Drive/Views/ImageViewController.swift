@@ -12,6 +12,10 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     private let linkButton = UIButton(type: .system)
     private let deleteButton = UIButton(type: .system)
     
+    var isFullScreen = false
+    
+    private var panGestureRecognizer: UIPanGestureRecognizer!
+    
     init(presenter: ImagePresenter, item: Items) {
         self.presenter = presenter
         self.item = item
@@ -29,10 +33,17 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         presenter.loadImage()
         presenter.updateNavigationBar()
         
+        imageView.isUserInteractionEnabled = true
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
         imageView.addGestureRecognizer(doubleTapGesture)
-        imageView.isUserInteractionEnabled = true
+        
+        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        imageView.addGestureRecognizer(panGestureRecognizer)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        tabBarController?.isTabBarHidden = false
     }
     
     private func setupUI() {
@@ -70,14 +81,56 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         ])
     }
     
-    @objc func handleDoubleTap() {
-        presenter.onImagetapped()
+    @objc func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+        
+        if isFullScreen {
+            // Если изображение в полном экране, возвращаем его обратно
+            UIView.animate(withDuration: 0.3, animations: {
+                // Возвращаем изображение в исходный размер с сохранением пропорций
+                self.imageView.transform = CGAffineTransform.identity
+                // Позиционируем изображение обратно в центр
+                self.imageView.center = self.view.center
+                print("Нормальное состояние")
+            })
+        } else {
+            // Если изображение не в полном экране, увеличиваем его так, чтобы оно выходило за пределы экрана
+            UIView.animate(withDuration: 0.3, animations: {
+                // Вычисляем масштаб, чтобы изображение стало больше экрана
+                let scaleX = self.view.bounds.width / self.imageView.frame.width * 2 // Увеличиваем на 1.5 раза
+                let scaleY = self.view.bounds.height / self.imageView.frame.height * 2 // Увеличиваем на 1.5 раза
+                let scale = max(scaleX, scaleY)  // Увеличиваем изображение на большее значение по оси X или Y
+
+                // Применяем масштабирование
+                self.imageView.transform = CGAffineTransform(scaleX: scale, y: scale)
+                
+                self.imageView.center = self.view.center
+                
+                print("Не нормальное состояние")
+            })
+        }
+        
+        // Переключаем флаг
+        isFullScreen.toggle()
     }
     
-    func updateFrame(_ frame: CGRect) {
-        UIView.animate(withDuration: 0.3) {
-            self.imageView.frame = frame
+    @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+            // Перемещаем изображение только в том случае, если оно увеличено
+            guard isFullScreen else { return }
+            
+            let translation = gesture.translation(in: view)
+            
+            // Изменяем позицию изображения в зависимости от движения пальца
+            if gesture.state == .changed {
+                imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
+                
+                gesture.setTranslation(.zero, in: view)
+            }
         }
+    
+    func updateFrame(_ frame: CGRect) {
+//        UIView.animate(withDuration: 0.3) {
+//            self.imageView.frame = frame
+//        }
     }
     
     func updateNavigationBar() {

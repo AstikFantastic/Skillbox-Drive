@@ -71,6 +71,7 @@ class AllFilesCell: UITableViewCell {
     }
     
     func setupCell(fileName: String, fileSize: String, creationDate: String) {
+        
         self.fileName.text = fileName
         self.fileSize.text = fileSize
         self.createdDate.text = creationDate
@@ -84,6 +85,21 @@ class AllFilesCell: UITableViewCell {
             activityIndicator.stopAnimating()
             return
         }
+        
+//        func setImage<T: ImageRepresentable>(for item: T) {
+//            activityIndicator.startAnimating()
+//            previewImage.image = nil
+//            
+//            if currentImageURL == item.imageURL {
+//                activityIndicator.stopAnimating()
+//                return
+//            }
+//
+//            // Общая логика для всех типов, поддерживающих ImageRepresentable
+//            loadImage(from: item.imageURL)
+//        }
+        
+        
         
         currentImageURL = item.file
         

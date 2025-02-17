@@ -5,6 +5,7 @@ protocol ProfilePresenterProtocol: AnyObject {
     func fetchDiskData()
     func didTapMoreButton()
     func logout()
+    func toPublishedFiles()
     func formatBtToGb(_ bytes: Int64) -> String
     func findAvailableSpace(diskData: ProfileModel) -> String
 }
@@ -53,6 +54,10 @@ class ProfilePresenter {
     
     func didTapMoreButton() {
         view?.showLogoutAlert()
+    }
+    
+    func toPublishedFiles() {
+        router.navigeteToPublishedFiles()
     }
     
     func logout() {

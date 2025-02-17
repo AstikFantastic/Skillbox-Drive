@@ -201,6 +201,7 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
     }
     
     @objc private func showPublishedFiles() {
+        presenter.toPublishedFiles()
         print("Кнопка нажата")
     }
     
