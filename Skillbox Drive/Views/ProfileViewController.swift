@@ -35,6 +35,10 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
     
     private func setupUI() {
         title = "Profile"
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        navigationItem.backBarButtonItem = backButton
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "ellipsis"),
             style: .plain,

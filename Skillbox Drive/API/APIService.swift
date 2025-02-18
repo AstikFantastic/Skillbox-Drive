@@ -14,7 +14,7 @@ class APIService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-
+        
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
@@ -43,65 +43,118 @@ class APIService {
     }
     
     func fetchPublicFiles(oAuthToken: String, limit: Int = 10, offset: Int = 0, type: String, completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-        guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources/public") else {
-            completion(.failure(NSError(domain: "ApiError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
-            return
-        }
+           guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources/public") else {
+               completion(.failure(NSError(domain: "ApiError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+               return
+           }
 
-        urlComponents.queryItems = [
-            URLQueryItem(name: "limit", value: "\(limit)"),
-            URLQueryItem(name: "offset", value: "\(offset)"),
-            URLQueryItem(name: "type", value: type)
-        ]
+           urlComponents.queryItems = [
+               URLQueryItem(name: "limit", value: "\(limit)"),
+               URLQueryItem(name: "offset", value: "\(offset)"),
+               URLQueryItem(name: "type", value: type)
+           ]
 
-        guard let url = urlComponents.url else {
-            completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL Components"])))
-            return
-        }
+           guard let url = urlComponents.url else {
+               completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL Components"])))
+               return
+           }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
+           var request = URLRequest(url: url)
+           request.httpMethod = "GET"
+           request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
+           let task = URLSession.shared.dataTask(with: request) { data, response, error in
+               if let error = error {
+                   completion(.failure(error))
+                   return
+               }
 
-            guard let data = data else {
-                completion(.failure(NSError(domain: "APIError", code: 500, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
-                return
-            }
-            
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("Raw JSON response:\n\(jsonString)")
-            } else {
-                print("Error: Unable to convert data to string.")
-            }
+               guard let data = data else {
+                   completion(.failure(NSError(domain: "APIError", code: 500, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                   return
+               }
+               
+               if let jsonString = String(data: data, encoding: .utf8) {
+                   print("Raw JSON response:\n\(jsonString)")
+               } else {
+                   print("Error: Unable to convert data to string.")
+               }
 
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let response = try decoder.decode(PublishedFilesResponse.self, from: data)
-                print("Decoded response: \(response)")
-                completion(.success(response.items))
-            } catch {
-                print("Decoding error: \(error)")
-                completion(.failure(error))
-            }
-        }
-        task.resume()
-    }
+               do {
+                   let decoder = JSONDecoder()
+                   decoder.keyDecodingStrategy = .convertFromSnakeCase
+                   let response = try decoder.decode(PublishedFilesResponse.self, from: data)
+                   print("Decoded response: \(response)")
+                   completion(.success(response.items))
+               } catch {
+                   print("Decoding error: \(error)")
+                   completion(.failure(error))
+               }
+           }
+           task.resume()
+       }
 
-    
-    func fetchFiles(oAuthToken: String, limit: Int = 100, offset: Int = 0, completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-        fetchPublicFiles(oAuthToken: oAuthToken, limit: limit, offset: offset, type: "file", completion: completion)
-    }
+       
+       func fetchFiles(oAuthToken: String, limit: Int = 100, offset: Int = 0, completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
+           fetchPublicFiles(oAuthToken: oAuthToken, limit: limit, offset: offset, type: "file", completion: completion)
+       }
 
-    func fetchDirs(oAuthToken: String, limit: Int = 100, offset: Int = 0, completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-        fetchPublicFiles(oAuthToken: oAuthToken, limit: limit, offset: offset, type: "dir", completion: completion)
-    }
+       func fetchDirs(oAuthToken: String, limit: Int = 100, offset: Int = 0, completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
+           fetchPublicFiles(oAuthToken: oAuthToken, limit: limit, offset: offset, type: "dir", completion: completion)
+       }
+       
+       
+    func fetchFolderMetadata(oAuthToken: String, path: String, limit: Int = 20, offset: Int = 0, completion: @escaping (Result<[File], Error>) -> Void) {
+           guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources") else {
+               completion(.failure(NSError(domain: "ApiError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+               return
+           }
+
+           urlComponents.queryItems = [
+               URLQueryItem(name: "path", value: path),
+               URLQueryItem(name: "limit", value: "\(limit)"),
+               URLQueryItem(name: "offset", value: "\(offset)"),
+               URLQueryItem(name: "fields", value: "name,_embedded.items.path,type,preview,created,modified")
+           ]
+
+           guard let url = urlComponents.url else {
+               completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL Components"])))
+               return
+           }
+
+           var request = URLRequest(url: url)
+           request.httpMethod = "GET"
+           request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
+
+           let task = URLSession.shared.dataTask(with: request) { data, response, error in
+               if let error = error {
+                   print("Request failed with error: \(error.localizedDescription)")
+                   completion(.failure(error))
+                   return
+               }
+
+               guard let data = data else {
+                   completion(.failure(NSError(domain: "APIError", code: 500, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                   return
+               }
+
+               if let jsonString = String(data: data, encoding: .utf8) {
+                   print("Raw JSON response:\n\(jsonString)")
+               }
+
+               do {
+                   let decoder = JSONDecoder()
+                   decoder.keyDecodingStrategy = .convertFromSnakeCase
+                   let response = try decoder.decode(FolderResponse.self, from: data)
+                   print("Decoded response: \(response)")
+                   completion(.success(response._embedded.items))
+               } catch {
+                   print("Decoding error: \(error)")
+                   completion(.failure(error))
+               }
+           }
+           task.resume()
+       }
 
     func fetchAllFiles(oAuthToken: String, limit: Int = 1, offset: Int = 0, previewSize: String = "S", previewCrop: String = "1", completion: @escaping (Result<LastLoadedFiles, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources/files") else {
@@ -163,7 +216,7 @@ class APIService {
             completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
                 completion(.failure(error))
@@ -177,7 +230,7 @@ class APIService {
         }
         task.resume()
     }
-
+    
     func fetchLastLoadedFiles(oAuthToken: String, limit: Int = 20, offset: Int = 0, previewSize: String = "25x22", previewCrop: String = "true",  completion: @escaping (Result<LastLoadedFiles, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded") else {
             completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -236,5 +289,5 @@ class APIService {
         }
         
         task.resume()
-    }    
+    }
 }

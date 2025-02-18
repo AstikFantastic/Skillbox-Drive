@@ -6,6 +6,8 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
     private var presenter: PublishedFilesPresenter!
     private var router: Router!
     var files: [PublishedFile] = []
+    var foldersData: [File] = []
+    var currentPath: String?
     let tableView = UITableView()
 
     override func viewDidLoad() {
@@ -28,6 +30,9 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
         backButton.title = ""
         navigationItem.backBarButtonItem = backButton
 
+        let backNavButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backNavButton
+        
         setupActivityIndicator()
         tableView.backgroundColor = .clear
         view.addSubview(tableView)
@@ -67,13 +72,18 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
 
     func showAllFiles(_ files: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
-            if files.isEmpty {
-                print("No files or folders found.")  // Логирование пустого ответа
-            } else {
-                print("Files received for display: \(files)")  // Логирование полученных файлов
-                self?.files = files
-                self?.tableView.reloadData()
-            }
+            self?.files = files
+            self?.foldersData.removeAll()
+            self?.currentPath = nil
+            self?.tableView.reloadData()
+        }
+    }
+
+    func showFolderData(_ folders: [File]) {
+        DispatchQueue.main.async { [weak self] in
+            self?.foldersData = folders
+            self?.files.removeAll()
+            self?.tableView.reloadData()
         }
     }
 
@@ -88,7 +98,11 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
     // MARK: - UITableViewDataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return files.count
+        if currentPath != nil {
+            return foldersData.count
+        } else {
+            return files.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -96,26 +110,46 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
                 return UITableViewCell()
             }
 
+        if currentPath != nil {
+            let item = foldersData[indexPath.row]
+            let fileSize = presenter.formattedFileSize(from: item.size ?? 0)
+            cell.setupCell(fileName: item.path, fileSize: fileSize, creationDate: item.created ?? "Lost creation data")
+        } else {
             let item = files[indexPath.row]
             let fileName = item.name
             let fileSize = presenter.formattedFileSize(from: item.size)
             let creationDate = item.created
-        
-        cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
-            
-            return cell
+            cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
+        }
+        return cell
     }
 
     // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if currentPath != nil {
+            let selectedFolder = foldersData[indexPath.row]
+            presenter.fetchFolderContents(path: selectedFolder.path)
+            currentPath = selectedFolder.path
+        } else {
             let selectedFile = files[indexPath.row]
-            
-            print("Selected file: \(selectedFile.name) (path: \(selectedFile.path))")
-            
+            if selectedFile.type == "dir" {
+                presenter.fetchFolderContents(path: selectedFile.path)
+                currentPath = selectedFile.path
+            }
         }
+    }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 45
+    }
+
+    // MARK: - Actions
+
+    @objc func backButtonTapped() {
+        if let _ = currentPath {
+            currentPath = nil
+            presenter.fetchLastLoadedFiles()
+        }
     }
 }

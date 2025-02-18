@@ -4,6 +4,7 @@ protocol PublishedFilesView: AnyObject {
     func showLoading()
     func hideLoading()
     func showAllFiles(_ files: [PublishedFile])
+    func showFolderData(_ files: [File])
     func showError(_ error: Error)
 }
 
@@ -53,6 +54,23 @@ class PublishedFilesPresenter {
             let allItems = dir + files
             self.view?.hideLoading()
             self.view?.showAllFiles(allItems)
+        }
+    }
+    
+    func fetchFolderContents(path: String, limit: Int = 100, offset: Int = 0) {
+        view?.showLoading()
+        print("Fetching contents for folder at path: \(path)")
+
+        apiService.fetchFolderMetadata(oAuthToken: oAuthToken, path: path, limit: limit, offset: offset) { result in
+            switch result {
+            case .success(let fetchedFiles):
+                print("Successfully fetched folder contents: \(fetchedFiles)")
+                self.view?.hideLoading()
+                self.view?.showFolderData(fetchedFiles)
+            case .failure(let error):
+                print("Error fetching folder contents: \(error)")
+                self.view?.showError(error)
+            }
         }
     }
 
