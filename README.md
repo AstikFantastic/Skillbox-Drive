@@ -60,13 +60,13 @@ Below is a full description of the usage scenarios. Each scenario has one of thr
 ❌ Where possible, information about the retrieved files and directories is cached.  
 
 ### View Published Files and Directories List  
-❌ Tapping on the "Published Files" option in the profile opens a list of published files and directories on the disk.  
-❌ The behavior of the list is similar to the list of recently uploaded files.  
-❌ Tapping on a folder opens the same screen showing the contents of the selected directory.  
-❌ For each published item, there is an option to unpublish it. Once unpublished, the item disappears from the list.  
-❌ Where possible, information about the retrieved files and directories is cached.  
+✅ Tapping on the "Published Files" option in the profile opens a list of published files and directories on the disk.  
+✅ The behavior of the list is similar to the list of recently uploaded files.  
+✅ Tapping on a folder opens the same screen showing the contents of the selected directory.  
+✅ For each published item, there is an option to unpublish it. Once unpublished, the item disappears from the list.  
+✅ Where possible, information about the retrieved files and directories is cached.  
 
 ### Log Out  
 ✅ Tapping the "Log Out" button in the profile shows a dialog: "Are you sure you want to log out? All local data will be deleted."  
-🚧 If the user confirms, the app logs out and deletes all local data.  
-🚧 After clearing data and on subsequent app launches, the login screen is shown.  
+✅ If the user confirms, the app logs out and deletes all local data.  
+✅ After clearing data and on subsequent app launches, the login screen is shown.  
