@@ -7,7 +7,7 @@ struct PublishedFilesResponse: Codable {
     let limit: Int?
     let offset: Int?
 }
-struct PublishedFile: Codable, ImageRepresentable {
+struct PublishedFile: Codable {
     let size: Int?
     let name: String
     let created: String

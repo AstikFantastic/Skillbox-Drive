@@ -25,6 +25,8 @@
 		886EA0F92D04C95F00FB7A8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886EA0EC2D04C95F00FB7A8F /* AppDelegate.swift */; };
 		886EA0FA2D04C95F00FB7A8F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886EA0F12D04C95F00FB7A8F /* SceneDelegate.swift */; };
 		886EA0FB2D04C95F00FB7A8F /* Skillbox_Drive.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 886EA0F22D04C95F00FB7A8F /* Skillbox_Drive.xcdatamodeld */; };
+		889819902D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8898198E2D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodeld */; };
+		88B91EEE2D6B53FD003DEC1F /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B91EED2D6B53FD003DEC1F /* CoreDataManager.swift */; };
 		88BF77482D40270A00A5D23C /* PDFViewComtroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77472D40270A00A5D23C /* PDFViewComtroller.swift */; };
 		88BF77642D453EAE00A5D23C /* OfficeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77632D453EAD00A5D23C /* OfficeViewController.swift */; };
 		88BF77662D453EBD00A5D23C /* PDFPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77652D453EBC00A5D23C /* PDFPresenter.swift */; };
@@ -66,6 +68,8 @@
 		886EA0EF2D04C95F00FB7A8F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		886EA0F12D04C95F00FB7A8F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		886EA0F52D04C95F00FB7A8F /* Skillbox_Drive.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Skillbox_Drive.xcdatamodel; sourceTree = "<group>"; };
+		8898198F2D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PublishedFilesModel.xcdatamodel; sourceTree = "<group>"; };
+		88B91EED2D6B53FD003DEC1F /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		88BF77472D40270A00A5D23C /* PDFViewComtroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewComtroller.swift; sourceTree = "<group>"; };
 		88BF77632D453EAD00A5D23C /* OfficeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeViewController.swift; sourceTree = "<group>"; };
 		88BF77652D453EBC00A5D23C /* PDFPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPresenter.swift; sourceTree = "<group>"; };
@@ -92,9 +96,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		880AD68A2D4E997E008AD83D /* Extensions */ = {
+		880AD68A2D4E997E008AD83D /* Helpers */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Extensions;
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		882D3E862D6A57B3006F3A95 /* UNUSED */ = {
@@ -163,9 +167,10 @@
 		886EA0F42D04C95F00FB7A8F /* Skillbox Drive */ = {
 			isa = PBXGroup;
 			children = (
-				880AD68A2D4E997E008AD83D /* Extensions */,
+				880AD68A2D4E997E008AD83D /* Helpers */,
 				88FD585A2D2767C40062FF8C /* Skillbox Drive.entitlements */,
 				886EA1012D04C97E00FB7A8F /* API */,
+				88B91EE22D6B5058003DEC1F /* Core Data */,
 				886EA0FD2D04C96600FB7A8F /* Models */,
 				886EA0FE2D04C96B00FB7A8F /* Views */,
 				886EA0FF2D04C97100FB7A8F /* Presenters */,
@@ -246,6 +251,15 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		88B91EE22D6B5058003DEC1F /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				88B91EED2D6B53FD003DEC1F /* CoreDataManager.swift */,
+				8898198E2D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodeld */,
+			);
+			path = "Core Data";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -264,7 +278,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				880AD68A2D4E997E008AD83D /* Extensions */,
+				880AD68A2D4E997E008AD83D /* Helpers */,
 				882D3E862D6A57B3006F3A95 /* UNUSED */,
 			);
 			name = "Skillbox Drive";
@@ -398,6 +412,8 @@
 				881829A62D36CAE800FB3516 /* AllFilesCell.swift in Sources */,
 				881829A82D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift in Sources */,
 				88BF77682D453ECF00A5D23C /* OfficePresenter.swift in Sources */,
+				88B91EEE2D6B53FD003DEC1F /* CoreDataManager.swift in Sources */,
+				889819902D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodeld in Sources */,
 				88BF776A2D453EDD00A5D23C /* PDFModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -628,6 +644,16 @@
 			);
 			currentVersion = 886EA0F52D04C95F00FB7A8F /* Skillbox_Drive.xcdatamodel */;
 			path = Skillbox_Drive.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		8898198E2D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				8898198F2D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodel */,
+			);
+			currentVersion = 8898198F2D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodel */;
+			path = PublishedFilesModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

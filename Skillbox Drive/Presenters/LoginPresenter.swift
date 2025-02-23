@@ -1,5 +1,6 @@
 import UIKit
 import YandexLoginSDK
+import CoreData
 
 protocol LoginViewProtocol: AnyObject {
     func navigateToTabBar()
@@ -42,8 +43,9 @@ class LoginPresenter {
     func yandexLogout() {
         do {
             try YandexLoginSDK.shared.logout()
+            print("YandexLogout выполнен успешно")
         } catch {
-            print(error.localizedDescription)
+            print("Ошибка при логауте: \(error.localizedDescription)")
         }
     }
     

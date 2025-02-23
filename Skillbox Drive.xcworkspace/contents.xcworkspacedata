@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:PublishedFileEntity+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:PublishedFileEntity+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
       location = "group:Skillbox Drive.xcodeproj">
    </FileRef>
    <FileRef

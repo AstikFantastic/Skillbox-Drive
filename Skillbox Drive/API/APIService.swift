@@ -224,6 +224,11 @@ class APIService {
     }
     
     func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        if let cachedImage = ImageCacheManager.shared.image(forKey: urlString) {
+            completion(.success(cachedImage))
+            return
+        }
+        
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
             return
@@ -235,6 +240,7 @@ class APIService {
                 return
             }
             if let data = data, let image = UIImage(data: data) {
+                ImageCacheManager.shared.save(image: image, forKey: urlString)
                 completion(.success(image))
             } else {
                 completion(.failure(NSError(domain: "Image data invalid", code: 0, userInfo: nil)))
@@ -242,6 +248,7 @@ class APIService {
         }
         task.resume()
     }
+
     
     func fetchLastLoadedFiles(oAuthToken: String, limit: Int = 20, offset: Int = 0, previewSize: String = "25x22", previewCrop: String = "true",  completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
         guard var urlComponents = URLComponents(string: "https://cloud-api.yandex.net/v1/disk/resources/last-uploaded") else {

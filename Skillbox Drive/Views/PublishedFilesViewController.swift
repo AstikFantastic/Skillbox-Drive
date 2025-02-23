@@ -39,7 +39,10 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
         pullToRefreshControl.addTarget(self, action: #selector(didPullToRefresh(_:)), for: .valueChanged)
         tableView.refreshControl = pullToRefreshControl
         
-        updateEmptyState()
+        reloadPublishedFiles.isHidden = true
+        imageView.isHidden = true
+        descriptionLabel.isHidden = true
+
     }
     
     
@@ -133,22 +136,33 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
     }
     
     private func updateEmptyState() {
+        guard !activityIndicator.isAnimating else {
+            reloadPublishedFiles.isHidden = true
+            imageView.isHidden = true
+            descriptionLabel.isHidden = true
+            return
+        }
+        
         let isEmpty: Bool = currentPathStack.isEmpty ? files.isEmpty : foldersData.isEmpty
         reloadPublishedFiles.isHidden = !isEmpty
         imageView.isHidden = !isEmpty
         descriptionLabel.isHidden = !isEmpty
     }
+
     
     func showLoading() {
         DispatchQueue.main.async {
-            self.activityIndicator.startAnimating()
+            if self.tableView.refreshControl?.isRefreshing == false {
+                self.activityIndicator.startAnimating()
+            }
         }
     }
     
     func hideLoading() {
         DispatchQueue.main.async {
-            self.activityIndicator.stopAnimating()
-        }
+                self.activityIndicator.stopAnimating()
+                self.updateEmptyState()
+            }
     }
     
     func showAllFiles(_ files: [PublishedFile]) {
@@ -157,13 +171,11 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
             self.files = files
             self.foldersData.removeAll()
             self.tableView.reloadData()
+            self.tableView.refreshControl?.endRefreshing()
             updateEmptyState()
-            self.tableView.refreshControl = self.pullToRefreshControl
-            if self.pullToRefreshControl.isRefreshing {
-                self.pullToRefreshControl.endRefreshing()
-            }
         }
     }
+
     
     func showFolderData(_ folders: [File]) {
         DispatchQueue.main.async { [weak self] in
@@ -171,8 +183,8 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
             self.foldersData = folders
             self.files.removeAll()
             self.tableView.reloadData()
-            updateEmptyState()
             self.tableView.refreshControl = nil
+            updateEmptyState()
         }
     }
     
@@ -196,7 +208,6 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
     // MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // Если стек пуст, значит мы на корневом уровне, иначе – в папке
         return currentPathStack.isEmpty ? files.count : foldersData.count
     }
     
@@ -230,7 +241,6 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
         print("didSelectRowAt called, currentPathStack: \(currentPathStack)")
         
         if currentPathStack.isEmpty {
-            // Обработка корневых файлов/папок
             let selectedItem = files[indexPath.row]
             print("Выбранный элемент из корня: \(selectedItem)")
             guard let type = selectedItem.type?.lowercased() else {
@@ -261,7 +271,6 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
                 print("Поле type отсутствует у выбранного элемента (в папке).")
                 return
             }
-            
             if type == "dir" {
                 print("Переход в вложенную папку: \(selectedItem.path)")
                 currentPathStack.append(selectedItem.path)
@@ -276,7 +285,6 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
             }
         }
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 45
@@ -305,6 +313,37 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
             completion()
         }))
         present(aletr, animated: true)
+    }
+    
+    func showNoInternetBanner(message: String) {
+        let banner = UILabel()
+        banner.backgroundColor = UIColor.red.withAlphaComponent(0.8)
+        banner.textColor = .white
+        banner.textAlignment = .center
+        banner.numberOfLines = 0
+        banner.text = message
+        banner.alpha = 0
+
+        view.addSubview(banner)
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            banner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            banner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            banner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            banner.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        UIView.animate(withDuration: 0.3) {
+            banner.alpha = 1
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            UIView.animate(withDuration: 0.3, animations: {
+                banner.alpha = 0
+            }, completion: { _ in
+                banner.removeFromSuperview()
+            })
+        }
     }
 }
 

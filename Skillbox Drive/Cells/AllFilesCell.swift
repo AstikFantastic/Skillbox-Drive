@@ -88,7 +88,6 @@ class AllFilesCell: UITableViewCell {
         activityIndicator.startAnimating()
         previewImage.image = nil
         
-        // Если URL не изменился, прекращаем загрузку
         if currentImageURL == item.file {
             activityIndicator.stopAnimating()
             return

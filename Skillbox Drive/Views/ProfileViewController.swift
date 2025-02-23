@@ -154,9 +154,11 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
     }
 
     private func showLogoutConfirmation() {
-        let alert = UIAlertController(title: "Exit", message: "Are you sure you want to log out?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Exit", message: "Are you sure you want to log out? All data will be deleted.", preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
             self.presenter.logout()
+            CoreDataManager.shared.clearCache()
+            ImageCacheManager.shared.clearCache()
         }
         let cancelAction = UIAlertAction(title: "No", style: .cancel)
         alert.addAction(confirmAction)

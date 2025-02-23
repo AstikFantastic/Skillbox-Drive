@@ -7,61 +7,72 @@ protocol PublishedFilesView: AnyObject {
     func showFolderData(_ files: [File])
     func showError(_ error: Error)
     func showAlert(message: String, completion: @escaping () -> Void)
+    func showNoInternetBanner(message: String)
 }
 
 class PublishedFilesPresenter {
     weak var view: PublishedFilesView?
     private let apiService: APIService
     private let oAuthToken: String
-
+    
     init(view: PublishedFilesView, oAuthToken: String, apiService: APIService) {
         self.view = view
         self.oAuthToken = oAuthToken
         self.apiService = apiService
     }
-
+    
     func fetchLastLoadedFiles(limit: Int = 100, offset: Int = 0) {
         view?.showLoading()
         
         let dispatchGroup = DispatchGroup()
         var files: [PublishedFile] = []
-        var dir: [PublishedFile] = []
+        var dirs: [PublishedFile] = []
         
         dispatchGroup.enter()
-        
         apiService.fetchFiles(oAuthToken: oAuthToken, limit: limit) { result in
             switch result {
             case .success(let fetchedFiles):
                 files = fetchedFiles
             case .failure(let error):
-                print("Error fetching files: \(error)")
+                print("Ошибка получения файлов: \(error)")
             }
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        
         apiService.fetchDirs(oAuthToken: oAuthToken, limit: limit) { result in
             switch result {
             case .success(let fetchedDirs):
-                dir = fetchedDirs
+                dirs = fetchedDirs
             case .failure(let error):
-                print("Error fetching directories: \(error)")
+                print("Ошибка получения папок: \(error)")
             }
             dispatchGroup.leave()
         }
         
         dispatchGroup.notify(queue: .main) {
-            let allItems = dir + files
+            let allItems = dirs + files
             self.view?.hideLoading()
-            self.view?.showAllFiles(allItems)
+            if !allItems.isEmpty {
+                CoreDataManager.shared.savePublishedFiles(allItems)
+                self.view?.showAllFiles(allItems)
+            } else {
+                self.view?.showNoInternetBanner(message: "No internet connection")
+                let cachedFiles = CoreDataManager.shared.fetchPublishedFiles()
+                if !cachedFiles.isEmpty {
+                    print("Загружаем данные из кэша")
+                    self.view?.showAllFiles(cachedFiles)
+                } else {
+                    self.view?.showError(NSError(domain: "APIError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Нет доступных данных"]))
+                }
+            }
         }
     }
     
     func fetchFolderContents(path: String, limit: Int = 100, offset: Int = 0, previewSize: String = "120x120", previewCrop: String = "true") {
         view?.showLoading()
         print("Fetching contents for folder at path: \(path)")
-
+        
         apiService.fetchFolderMetadata(oAuthToken: oAuthToken, path: path, limit: limit, offset: offset, previewSize: previewSize, previewCrop: previewCrop) { result in
             switch result {
             case .success(let fetchedFiles):
@@ -91,8 +102,8 @@ class PublishedFilesPresenter {
             }
         }
     }
-
-
+    
+    
     func formattedFileSize(from size: Int?) -> String {
         guard let size = size else { return "Unknown size" }
         let mb = Double(size) / 1_048_576
