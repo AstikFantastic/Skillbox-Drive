@@ -5,9 +5,9 @@ class OfficeViewController: UIViewController, OfficeView {
     
     private let presenter: OfficePresenter
     private var webView: WKWebView!
-    private let item: Items
+    private let item: PublishedFile
     
-    init(presenter: OfficePresenter, item: Items) {
+    init(presenter: OfficePresenter, item: PublishedFile) {
         self.item = item
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)

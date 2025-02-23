@@ -5,7 +5,7 @@ struct LastLoadedFiles: Codable {
     let limit: Int
 }
 
-struct Items: Codable {
+struct Items: Codable, ImageRepresentable {
     let size: Int
     let name: String
     let created: String
@@ -13,5 +13,5 @@ struct Items: Codable {
     let preview: String?
     let path, sha256, type, md5: String?
     let mediaType: String?
-    let mimeType: String
+    let mimeType: String?
 }

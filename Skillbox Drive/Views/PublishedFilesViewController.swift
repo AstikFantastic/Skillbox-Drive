@@ -1,55 +1,123 @@
 import UIKit
 
 class PublishedFilesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, PublishedFilesView {
-
+    
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var presenter: PublishedFilesPresenter!
     private var router: Router!
+    private var reloadPublishedFiles = UIButton()
+    private var imageView = UIImageView()
+    private var descriptionLabel = UILabel()
+    let tableView = UITableView()
+    
+    let pullToRefreshControl = UIRefreshControl()
+    
     var files: [PublishedFile] = []
     var foldersData: [File] = []
-    var currentPath: String?
-    let tableView = UITableView()
-
+    var currentPathStack: [String] = [] {
+        didSet {
+            updateRefreshControlState()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        
+        guard let navigationController = self.navigationController else { return }
+        
         let apiService = APIService()
-        let navigationController = self.navigationController
         if let oAuthToken = UserDefaults.standard.string(forKey: "userToken") {
-            router = Router(navigationController: navigationController!)
+            router = Router(navigationController: navigationController)
             presenter = PublishedFilesPresenter(view: self, oAuthToken: oAuthToken, apiService: apiService)
             presenter.fetchLastLoadedFiles()
         }
+        
         tableView.dataSource = self
         tableView.delegate = self
+        
+        pullToRefreshControl.addTarget(self, action: #selector(didPullToRefresh(_:)), for: .valueChanged)
+        tableView.refreshControl = pullToRefreshControl
+        
+        updateEmptyState()
     }
-
+    
+    
+    // MARK: - UI Setup
+    
     private func setupUI() {
         title = "Published Files"
         let backButton = UIBarButtonItem()
         backButton.title = ""
         navigationItem.backBarButtonItem = backButton
-
-        let backNavButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        
+        let backNavButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backNavButton
         
         setupActivityIndicator()
+        
+        tableView.register(PublishedFilesCell.self, forCellReuseIdentifier: PublishedFilesCell.identifier)
+        
         tableView.backgroundColor = .clear
         view.addSubview(tableView)
+        view.addSubview(reloadPublishedFiles)
+        view.addSubview(imageView)
+        view.addSubview(descriptionLabel)
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        reloadPublishedFiles.translatesAutoresizingMaskIntoConstraints = false
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        reloadPublishedFiles.setTitle("Refresh", for: .normal)
+        reloadPublishedFiles.setTitleColor(.black, for: .normal)
+        reloadPublishedFiles.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        reloadPublishedFiles.contentHorizontalAlignment = .center
+        reloadPublishedFiles.layer.borderWidth = 0.33
+        reloadPublishedFiles.layer.borderColor = CGColor(red: 241/255, green: 175/255, blue: 171/255, alpha: 1)
+        reloadPublishedFiles.layer.cornerRadius = 10
+        reloadPublishedFiles.backgroundColor = UIColor(red: 241/255, green: 175/255, blue: 171/255, alpha: 1)
+        var config = UIButton.Configuration.plain()
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 17.5, bottom: 0, trailing: 0)
+        reloadPublishedFiles.configuration = config
+        reloadPublishedFiles.addTarget(self, action: #selector(refreshData), for: .touchUpInside)
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "empty published files")
+        
+        descriptionLabel.font = UIFont(name: "Graphik", size: 17)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.text = "You do not have any published files yet"
+        
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            reloadPublishedFiles.heightAnchor.constraint(equalToConstant: 45),
+            reloadPublishedFiles.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -60),
+            reloadPublishedFiles.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 17.5),
+            reloadPublishedFiles.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -17.5),
+            
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
+            imageView.heightAnchor.constraint(equalToConstant: 147),
+            imageView.widthAnchor.constraint(equalToConstant: 149),
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 460),
+            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 68),
+            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -68)
         ])
-        tableView.register(AllFilesCell.self, forCellReuseIdentifier: AllFilesCell.identifier)
     }
-
-    func setupActivityIndicator() {
+    
+    private func setupActivityIndicator() {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         activityIndicator.color = .gray
+        activityIndicator.layer.zPosition = 1
         view.addSubview(activityIndicator)
         view.bringSubviewToFront(activityIndicator)
         NSLayoutConstraint.activate([
@@ -57,36 +125,57 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
-
+    
+    // MARK: - Loading / Error Handling
+    
+    private func updateRefreshControlState() {
+        tableView.refreshControl = currentPathStack.isEmpty ? pullToRefreshControl : nil
+    }
+    
+    private func updateEmptyState() {
+        let isEmpty: Bool = currentPathStack.isEmpty ? files.isEmpty : foldersData.isEmpty
+        reloadPublishedFiles.isHidden = !isEmpty
+        imageView.isHidden = !isEmpty
+        descriptionLabel.isHidden = !isEmpty
+    }
+    
     func showLoading() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
     }
-
+    
     func hideLoading() {
         DispatchQueue.main.async {
             self.activityIndicator.stopAnimating()
         }
     }
-
+    
     func showAllFiles(_ files: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
-            self?.files = files
-            self?.foldersData.removeAll()
-            self?.currentPath = nil
-            self?.tableView.reloadData()
+            guard let self = self else { return }
+            self.files = files
+            self.foldersData.removeAll()
+            self.tableView.reloadData()
+            updateEmptyState()
+            self.tableView.refreshControl = self.pullToRefreshControl
+            if self.pullToRefreshControl.isRefreshing {
+                self.pullToRefreshControl.endRefreshing()
+            }
         }
     }
-
+    
     func showFolderData(_ folders: [File]) {
         DispatchQueue.main.async { [weak self] in
-            self?.foldersData = folders
-            self?.files.removeAll()
-            self?.tableView.reloadData()
+            guard let self = self else { return }
+            self.foldersData = folders
+            self.files.removeAll()
+            self.tableView.reloadData()
+            updateEmptyState()
+            self.tableView.refreshControl = nil
         }
     }
-
+    
     func showError(_ error: Error) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
@@ -94,62 +183,153 @@ class PublishedFilesViewController: UIViewController, UITableViewDataSource, UIT
             self.present(alert, animated: true, completion: nil)
         }
     }
-
-    // MARK: - UITableViewDataSource
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if currentPath != nil {
-            return foldersData.count
-        } else {
-            return files.count
-        }
+    
+    @objc private func refreshData() {
+        presenter.fetchLastLoadedFiles()
     }
-
+    
+    @objc private func didPullToRefresh(_ sender: UIRefreshControl) {
+        presenter.fetchLastLoadedFiles()
+    }
+    
+    
+    // MARK: - UITableViewDataSource
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Если стек пуст, значит мы на корневом уровне, иначе – в папке
+        return currentPathStack.isEmpty ? files.count : foldersData.count
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: AllFilesCell.identifier, for: indexPath) as? AllFilesCell else {
-                return UITableViewCell()
-            }
-
-        if currentPath != nil {
-            let item = foldersData[indexPath.row]
-            let fileSize = presenter.formattedFileSize(from: item.size ?? 0)
-            cell.setupCell(fileName: item.path, fileSize: fileSize, creationDate: item.created ?? "Lost creation data")
-        } else {
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PublishedFilesCell.identifier, for: indexPath) as? PublishedFilesCell else {
+            return UITableViewCell()
+        }
+        cell.delegate = self
+        
+        if currentPathStack.isEmpty {
             let item = files[indexPath.row]
-            let fileName = item.name
-            let fileSize = presenter.formattedFileSize(from: item.size)
-            let creationDate = item.created
-            cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
+            cell.configureUnpublishButton(shouldShow: true)
+            cell.setupCell(fileName: item.name, fileSize: presenter.formattedFileSize(from: item.size), creationDate: DateFormatter.formattedString(from: item.created))
+            cell.setImage(item: item)
+            cell.filePath = item.path
+        } else {
+            cell.configureUnpublishButton(shouldShow: false)
+            let item = foldersData[indexPath.row]
+            let name = item.name
+            cell.setupCell(fileName: name, fileSize: presenter.formattedFileSize(from: item.size ?? 0), creationDate: DateFormatter.formattedString(from: item.created))
+            cell.setIconForFilesInFolders(item: item)
+            cell.filePath = item.path
         }
         return cell
     }
-
+    
     // MARK: - UITableViewDelegate
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if currentPath != nil {
-            let selectedFolder = foldersData[indexPath.row]
-            presenter.fetchFolderContents(path: selectedFolder.path)
-            currentPath = selectedFolder.path
+        print("didSelectRowAt called, currentPathStack: \(currentPathStack)")
+        
+        if currentPathStack.isEmpty {
+            // Обработка корневых файлов/папок
+            let selectedItem = files[indexPath.row]
+            print("Выбранный элемент из корня: \(selectedItem)")
+            guard let type = selectedItem.type?.lowercased() else {
+                print("Поле type отсутствует у выбранного элемента.")
+                return
+            }
+            if type == "dir" {
+                print("Переход в папку: \(selectedItem.path)")
+                currentPathStack.append(selectedItem.path)
+                presenter.fetchFolderContents(path: selectedItem.path)
+            } else if type == "file" {
+                if let mediaType = selectedItem.mediaType {
+                    switch mediaType {
+                    case "document":
+                        router.navigateToWebPage(with: selectedItem)
+                    case "image":
+                        router.navigateToFileDetail(with: selectedItem)
+                    default:
+                        print("asdasd")
+                    }
+                    
+                }
+            }
         } else {
-            let selectedFile = files[indexPath.row]
-            if selectedFile.type == "dir" {
-                presenter.fetchFolderContents(path: selectedFile.path)
-                currentPath = selectedFile.path
+            let selectedItem = foldersData[indexPath.row]
+            print("Выбранный элемент из папки: \(selectedItem)")
+            guard let type = selectedItem.type else {
+                print("Поле type отсутствует у выбранного элемента (в папке).")
+                return
+            }
+            
+            if type == "dir" {
+                print("Переход в вложенную папку: \(selectedItem.path)")
+                currentPathStack.append(selectedItem.path)
+                presenter.fetchFolderContents(path: selectedItem.path)
+            } else if type == "file" {
+                if let mediaType = selectedItem.mediaType {
+                    if mediaType == "document" || mediaType == "spreadsheet" {
+                        print("Открытие файла внутри папки: \(selectedItem.name)")
+                        
+                    }
+                }
             }
         }
     }
-
+    
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 45
     }
-
+    
     // MARK: - Actions
-
+    
     @objc func backButtonTapped() {
-        if let _ = currentPath {
-            currentPath = nil
-            presenter.fetchLastLoadedFiles()
+        if !currentPathStack.isEmpty {
+            currentPathStack.removeLast()
+            if let lastPath = currentPathStack.last {
+                print("Возврат к папке: \(lastPath)")
+                presenter.fetchFolderContents(path: lastPath)
+            } else {
+                print("Возврат в корневую директорию")
+                presenter.fetchLastLoadedFiles()
+            }
+        } else {
+            router.returnToProfileVC()
         }
     }
+    
+    func showAlert(message: String, completion: @escaping () -> Void) {
+        let aletr = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        aletr.addAction(UIAlertAction(title: "Ok", style: .default, handler: { _ in
+            completion()
+        }))
+        present(aletr, animated: true)
+    }
 }
+
+extension PublishedFilesViewController: PublishedFilesCellDelegate {
+    func publishedFilesCell(_ cell: PublishedFilesCell, didTapUnpublishedButton button: UIButton) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let titleAction = UIAlertAction(title: cell.displayedFileName, style: .default, handler: nil)
+        titleAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
+        
+        let deleteAction = UIAlertAction(title: "Unpublish file", style: .destructive) { _ in
+            let resourcePath = cell.filePath ?? "Путь не найден"
+            self.presenter.unpublishRespopnse(path: resourcePath)
+            print("File unpublished")
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(titleAction)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        if let firstAction = alert.actions.first {
+            firstAction.isEnabled = false
+        }
+        
+        present(alert, animated: true)
+    }
+}
+
+

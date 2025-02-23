@@ -5,7 +5,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var presenter: LastLoadedFilesPresenter!
     private var router: Router!
-    var files: [Items] = []
+    var files: [PublishedFile] = []
     let tableView = UITableView()
     
     override func viewDidLoad() {
@@ -66,7 +66,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func showAllFiles(_ files: [Items]) {
+    func showAllFiles(_ files: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
             if files.isEmpty {
                 print("No files found.")
@@ -101,9 +101,8 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         let fileSize = presenter.formattedFileSize(from: item.size)
         let creationDate = DateFormatter.formattedString(from: item.created)
         
-        cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
-        
-        cell.setImage(for: item)
+        cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)        
+        cell.setImage(item: item)
         
         return cell
     }
@@ -114,7 +113,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         let file = files[indexPath.row]
         print("Выбран файл: \(file.name)")
         if file.mimeType == "application/pdf" {
-            router.navigateToPDFDetail(with: file)
+//            router.navigateToPDFDetail(with: file)
         } else if file.mimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.mimeType == "application/vnd.openxmlformats-officedocument.presentationml.presentation" {
             router.navigateToWebPage(with: file)
         } else {

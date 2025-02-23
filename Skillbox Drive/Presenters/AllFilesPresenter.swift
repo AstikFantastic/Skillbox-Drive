@@ -3,7 +3,7 @@ import UIKit
 protocol FilesView: AnyObject {
     func showLoading()
     func hideLoading()
-    func showAllFiles(_ files: [Items])
+    func showAllFiles(_ files: [PublishedFile])
     func showError(_ error: Error)
 }
 
@@ -25,7 +25,7 @@ class AllFilesPresenter {
             self?.view?.hideLoading()
             switch result {
             case .success(let data):
-                self?.view?.showAllFiles(data.items)
+                self?.view?.showAllFiles(data)
             case .failure(let error):
                 self?.view?.showError(error)
             }

@@ -6,6 +6,7 @@ protocol PublishedFilesView: AnyObject {
     func showAllFiles(_ files: [PublishedFile])
     func showFolderData(_ files: [File])
     func showError(_ error: Error)
+    func showAlert(message: String, completion: @escaping () -> Void)
 }
 
 class PublishedFilesPresenter {
@@ -57,11 +58,11 @@ class PublishedFilesPresenter {
         }
     }
     
-    func fetchFolderContents(path: String, limit: Int = 100, offset: Int = 0) {
+    func fetchFolderContents(path: String, limit: Int = 100, offset: Int = 0, previewSize: String = "120x120", previewCrop: String = "true") {
         view?.showLoading()
         print("Fetching contents for folder at path: \(path)")
 
-        apiService.fetchFolderMetadata(oAuthToken: oAuthToken, path: path, limit: limit, offset: offset) { result in
+        apiService.fetchFolderMetadata(oAuthToken: oAuthToken, path: path, limit: limit, offset: offset, previewSize: previewSize, previewCrop: previewCrop) { result in
             switch result {
             case .success(let fetchedFiles):
                 print("Successfully fetched folder contents: \(fetchedFiles)")
@@ -73,6 +74,24 @@ class PublishedFilesPresenter {
             }
         }
     }
+    
+    func unpublishRespopnse(path: String) {
+        apiService.unpublishResource(oAuthToken: oAuthToken, path: path) { result in
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    self.view?.showAlert(message: "The file is currently unpublished") {
+                        self.fetchLastLoadedFiles(limit: 100, offset: 0)
+                    }
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.view?.showError(error)
+                }
+            }
+        }
+    }
+
 
     func formattedFileSize(from size: Int?) -> String {
         guard let size = size else { return "Unknown size" }

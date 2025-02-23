@@ -3,10 +3,12 @@ import UIKit
 extension UIViewController {
     func createNavigationTitleStack(name: String?, creationDate: String?) -> UIStackView {
         let titleLabel = UILabel()
+
         titleLabel.text = name
         titleLabel.font = UIFont.boldSystemFont(ofSize: 14)
         titleLabel.textColor = .black
         titleLabel.textAlignment = .center
+        titleLabel.lineBreakMode = .byTruncatingMiddle
         
         let dateLabel = UILabel()
         dateLabel.text = DateFormatter.formattedString(from: creationDate)

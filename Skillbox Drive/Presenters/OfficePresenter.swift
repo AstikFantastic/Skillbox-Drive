@@ -7,11 +7,11 @@ protocol OfficeView: AnyObject {
 }
 
 class OfficePresenter {
-    let item: Items
+    let item: PublishedFile
     private let page: OfficeModel
     private weak var view: OfficeView?
     
-    init(item: Items, page: OfficeModel) {
+    init(item: PublishedFile, page: OfficeModel) {
         self.item = item
         self.page = page
     }

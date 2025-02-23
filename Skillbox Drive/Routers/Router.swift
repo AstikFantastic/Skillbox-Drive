@@ -1,5 +1,6 @@
 import UIKit
 
+
 class Router {
     
     private weak var navigationController: UINavigationController?
@@ -8,7 +9,7 @@ class Router {
         self.navigationController = navigationController
     }
     
-    func navigateToFileDetail(with item: Items) {
+    func navigateToFileDetail(with item: PublishedFile) {
         let imagePresenter = ImagePresenter(item: item, apiService: APIService())
         let imageViewController = ImageViewController(presenter: imagePresenter, item: item)
         navigationController?.pushViewController(imageViewController, animated: true)
@@ -24,7 +25,7 @@ class Router {
         navigationController?.pushViewController(pdfViewController, animated: true)
     }
     
-    func navigateToWebPage(with item: Items) {
+    func navigateToWebPage(with item: PublishedFile) {
         guard let filePath = item.file, let fileURL = URL(string: filePath) else {
             return
         }
@@ -48,5 +49,9 @@ class Router {
     func navigeteToPublishedFiles() {
         let vc = PublishedFilesViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func returnToProfileVC() {
+        navigationController?.popViewController(animated: true)
     }
 }

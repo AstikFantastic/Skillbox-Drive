@@ -5,7 +5,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var presenter: AllFilesPresenter!
-    var files: [Items] = []
+    var files: [PublishedFile] = []
     let tableView = UITableView()
     
     override func viewDidLoad() {
@@ -66,7 +66,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    func showAllFiles(_ files: [Items]) {
+    func showAllFiles(_ files: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
             if files.isEmpty {
                 print("No files found.")
@@ -101,7 +101,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         let fileSize = presenter.formattedFileSize(from: item.size)
         let creationDate = DateFormatter.formattedString(from: item.created)
         cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
-        cell.setImage(for: item)
+        cell.setImage(item: item)
         
         return cell
     }

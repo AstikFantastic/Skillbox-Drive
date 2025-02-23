@@ -11,12 +11,12 @@ protocol ImagePresenterProtocol: AnyObject {
 
 class ImagePresenter {
     
-    private let item: Items
+    private let item: PublishedFile
     weak var view: FileDetailView?
     private let apiService: APIService
     private var model: ImageModel
     
-    init(item: Items, apiService: APIService) {
+    init(item: PublishedFile, apiService: APIService) {
         self.item = item
         self.apiService = apiService
         self.model = ImageModel(name: "Name", image: UIImage(systemName: "photo")!, isFullScreen: false)

@@ -9,12 +9,13 @@
 /* Begin PBXBuildFile section */
 		87815CF19DFCE6223418EC0D /* Pods_Skillbox_Drive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E8854040361ECF8762A3D2 /* Pods_Skillbox_Drive.framework */; };
 		881100152D5913CF00B5D676 /* YandexIdWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881100142D5913CF00B5D676 /* YandexIdWebViewController.swift */; };
-		881829A22D36C9C600FB3516 /* LastLoadedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881829A12D36C9C600FB3516 /* LastLoadedFiles.swift */; };
 		881829A62D36CAE800FB3516 /* AllFilesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881829A42D36CAE800FB3516 /* AllFilesCell.swift */; };
 		881829A82D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881829A72D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift */; };
 		882913062D28837200C58A86 /* LoginRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882913052D28837200C58A86 /* LoginRouter.swift */; };
 		8829130C2D288AA500C58A86 /* LastFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8829130B2D288AA500C58A86 /* LastFilesViewController.swift */; };
 		882913102D288D0A00C58A86 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8829130F2D288D0A00C58A86 /* APIService.swift */; };
+		882D3E832D69C539006F3A95 /* PublishedFilesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882D3E822D69C539006F3A95 /* PublishedFilesCell.swift */; };
+		882D3E8A2D6A59E3006F3A95 /* FolderResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882D3E892D6A59E3006F3A95 /* FolderResponseModel.swift */; };
 		883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883774FE2D3C342800C61981 /* ImageViewController.swift */; };
 		883775032D3C397B00C61981 /* ImagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775022D3C397B00C61981 /* ImagePresenter.swift */; };
 		883775082D3C3A7300C61981 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775072D3C3A7300C61981 /* Router.swift */; };
@@ -30,7 +31,6 @@
 		88BF77682D453ECF00A5D23C /* OfficePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77672D453ECF00A5D23C /* OfficePresenter.swift */; };
 		88BF776A2D453EDD00A5D23C /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF77692D453EDD00A5D23C /* PDFModel.swift */; };
 		88BF776C2D453EE600A5D23C /* OfficeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF776B2D453EE600A5D23C /* OfficeModel.swift */; };
-		88C1A96F2D60E9BD00BA598A /* AllFilesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A96C2D60E9BD00BA598A /* AllFilesModel.swift */; };
 		88C1A9702D60E9BD00BA598A /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A96D2D60E9BD00BA598A /* OnboardingModel.swift */; };
 		88C1A9712D60E9BD00BA598A /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A96E2D60E9BD00BA598A /* ProfileModel.swift */; };
 		88C1A9732D611CC000BA598A /* PublishedFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A9722D611CC000BA598A /* PublishedFilesViewController.swift */; };
@@ -48,12 +48,13 @@
 
 /* Begin PBXFileReference section */
 		881100142D5913CF00B5D676 /* YandexIdWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexIdWebViewController.swift; sourceTree = "<group>"; };
-		881829A12D36C9C600FB3516 /* LastLoadedFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLoadedFiles.swift; sourceTree = "<group>"; };
 		881829A42D36CAE800FB3516 /* AllFilesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesCell.swift; sourceTree = "<group>"; };
 		881829A72D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLoadedFilesPresenter.swift; sourceTree = "<group>"; };
 		882913052D28837200C58A86 /* LoginRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRouter.swift; sourceTree = "<group>"; };
 		8829130B2D288AA500C58A86 /* LastFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFilesViewController.swift; sourceTree = "<group>"; };
 		8829130F2D288D0A00C58A86 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		882D3E822D69C539006F3A95 /* PublishedFilesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedFilesCell.swift; sourceTree = "<group>"; };
+		882D3E892D6A59E3006F3A95 /* FolderResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderResponseModel.swift; sourceTree = "<group>"; };
 		883774FE2D3C342800C61981 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		883775022D3C397B00C61981 /* ImagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePresenter.swift; sourceTree = "<group>"; };
 		883775072D3C3A7300C61981 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
@@ -71,7 +72,6 @@
 		88BF77672D453ECF00A5D23C /* OfficePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficePresenter.swift; sourceTree = "<group>"; };
 		88BF77692D453EDD00A5D23C /* PDFModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFModel.swift; sourceTree = "<group>"; };
 		88BF776B2D453EE600A5D23C /* OfficeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeModel.swift; sourceTree = "<group>"; };
-		88C1A96C2D60E9BD00BA598A /* AllFilesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesModel.swift; sourceTree = "<group>"; };
 		88C1A96D2D60E9BD00BA598A /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
 		88C1A96E2D60E9BD00BA598A /* ProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
 		88C1A9722D611CC000BA598A /* PublishedFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedFilesViewController.swift; sourceTree = "<group>"; };
@@ -95,6 +95,11 @@
 		880AD68A2D4E997E008AD83D /* Extensions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		882D3E862D6A57B3006F3A95 /* UNUSED */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UNUSED;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -132,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				881829A42D36CAE800FB3516 /* AllFilesCell.swift */,
+				882D3E822D69C539006F3A95 /* PublishedFilesCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -178,14 +184,14 @@
 		886EA0FD2D04C96600FB7A8F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				88C1A96C2D60E9BD00BA598A /* AllFilesModel.swift */,
+				882D3E862D6A57B3006F3A95 /* UNUSED */,
 				88C1A96D2D60E9BD00BA598A /* OnboardingModel.swift */,
 				88C1A96E2D60E9BD00BA598A /* ProfileModel.swift */,
-				881829A12D36C9C600FB3516 /* LastLoadedFiles.swift */,
 				8837750B2D3C590600C61981 /* ImageModel.swift */,
 				88BF77692D453EDD00A5D23C /* PDFModel.swift */,
 				88BF776B2D453EE600A5D23C /* OfficeModel.swift */,
 				88C1A9762D611F1000BA598A /* PublishedFilesModel.swift */,
+				882D3E892D6A59E3006F3A95 /* FolderResponseModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -259,6 +265,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				880AD68A2D4E997E008AD83D /* Extensions */,
+				882D3E862D6A57B3006F3A95 /* UNUSED */,
 			);
 			name = "Skillbox Drive";
 			productName = "Skillbox Drive";
@@ -362,15 +369,16 @@
 				886EA0F92D04C95F00FB7A8F /* AppDelegate.swift in Sources */,
 				88BF776C2D453EE600A5D23C /* OfficeModel.swift in Sources */,
 				8829130C2D288AA500C58A86 /* LastFilesViewController.swift in Sources */,
-				88C1A96F2D60E9BD00BA598A /* AllFilesModel.swift in Sources */,
 				88C1A9702D60E9BD00BA598A /* OnboardingModel.swift in Sources */,
 				88C1A9712D60E9BD00BA598A /* ProfileModel.swift in Sources */,
 				886EA0FA2D04C95F00FB7A8F /* SceneDelegate.swift in Sources */,
+				882D3E8A2D6A59E3006F3A95 /* FolderResponseModel.swift in Sources */,
 				8837750C2D3C590600C61981 /* ImageModel.swift in Sources */,
 				88E595072D5D10860016E224 /* AllFilesViewController.swift in Sources */,
 				88E595082D5D10860016E224 /* LoginViewController.swift in Sources */,
 				88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */,
 				88E5950A2D5D10860016E224 /* ProfileViewController.swift in Sources */,
+				882D3E832D69C539006F3A95 /* PublishedFilesCell.swift in Sources */,
 				88E595142D5D28C70016E224 /* AllFilesPresenter.swift in Sources */,
 				88E595152D5D28C70016E224 /* LoginPresenter.swift in Sources */,
 				88E595162D5D28C70016E224 /* OnboardingPresenter.swift in Sources */,
@@ -378,7 +386,6 @@
 				88E595172D5D28C70016E224 /* ProfilePresenter.swift in Sources */,
 				883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */,
 				88BF77482D40270A00A5D23C /* PDFViewComtroller.swift in Sources */,
-				881829A22D36C9C600FB3516 /* LastLoadedFiles.swift in Sources */,
 				883775032D3C397B00C61981 /* ImagePresenter.swift in Sources */,
 				882913062D28837200C58A86 /* LoginRouter.swift in Sources */,
 				88BF77662D453EBD00A5D23C /* PDFPresenter.swift in Sources */,

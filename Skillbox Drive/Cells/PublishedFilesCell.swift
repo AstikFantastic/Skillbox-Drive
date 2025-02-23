@@ -1,26 +1,42 @@
+import Foundation
 import UIKit
 
-protocol ImageRepresentable {
-    var file: String? { get }
-    var mediaType: String? { get }
-    var mimeType: String? { get }
-    var type: String? { get }
+protocol PublishedFilesCellDelegate: AnyObject {
+    func publishedFilesCell(_ cell: PublishedFilesCell, didTapUnpublishedButton button: UIButton)
 }
 
-class AllFilesCell: UITableViewCell {
+class PublishedFilesCell: UITableViewCell {
     
-    static let identifier = "AllFilesCell"
+    static let identifier = "PublishedFilesCell"
     
-    private var fileName = UILabel()
+    weak var delegate: PublishedFilesCellDelegate?
+    
+    public var fileName = UILabel()
     private var fileSize = UILabel()
     private var createdDate = UILabel()
     private var previewImage = UIImageView()
+    private let unpublishedButton = UIButton(type: .custom)
     private var activityIndicator = UIActivityIndicatorView(style: .medium)
     private var currentImageURL: String?
+    var displayedFileName: String? {
+        return fileName.text
+    }
+    func configureUnpublishButton(shouldShow: Bool) {
+            unpublishedButton.isHidden = !shouldShow
+    }
+    
+    public var filePath: String?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        previewImage.image = nil
+        currentImageURL = nil
+        activityIndicator.stopAnimating()
     }
     
     required init?(coder: NSCoder) {
@@ -54,7 +70,7 @@ class AllFilesCell: UITableViewCell {
         fileName.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             fileName.leadingAnchor.constraint(equalTo: previewImage.trailingAnchor, constant: 10),
-            fileName.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            fileName.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
             fileName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
         ])
         
@@ -75,10 +91,22 @@ class AllFilesCell: UITableViewCell {
             createdDate.leadingAnchor.constraint(equalTo: fileSize.trailingAnchor, constant: 5),
             createdDate.centerYAnchor.constraint(equalTo: fileSize.centerYAnchor)
         ])
+        
+        
+        unpublishedButton.frame = CGRect(x: 50, y: 50, width: 50, height: 50)
+        unpublishedButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        unpublishedButton.tintColor = .gray
+        unpublishedButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        unpublishedButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(unpublishedButton)
+        NSLayoutConstraint.activate([
+            unpublishedButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            unpublishedButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
+        ])
+        
     }
     
     func setupCell(fileName: String, fileSize: String, creationDate: String) {
-        
         self.fileName.text = fileName
         self.fileSize.text = fileSize
         self.createdDate.text = creationDate
@@ -87,16 +115,19 @@ class AllFilesCell: UITableViewCell {
     func setImage(item: PublishedFile) {
         activityIndicator.startAnimating()
         previewImage.image = nil
-        
-        // Если URL не изменился, прекращаем загрузку
+
+        if item.type == "dir" {
+            previewImage.image = UIImage(named: "folder")
+        }
+
         if currentImageURL == item.file {
             activityIndicator.stopAnimating()
             return
         }
-        
+
         currentImageURL = item.file
-        
-        if item.mediaType == "image", let previewURL = item.file {
+
+        if item.mediaType == "image", let previewURL = currentImageURL {
             APIService.shared.fetchImage(from: previewURL) { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
@@ -109,7 +140,6 @@ class AllFilesCell: UITableViewCell {
                 }
             }
         }
-        // Если это документ, проверяем расширение файла
         else if item.mediaType == "document" {
             let fileExtension: String
             if !item.name.isEmpty {
@@ -134,8 +164,64 @@ class AllFilesCell: UITableViewCell {
             activityIndicator.stopAnimating()
         }
         else {
-            previewImage.image = UIImage(named: "questionmark")
+            previewImage.image = UIImage(systemName: "questionmark")
             activityIndicator.stopAnimating()
         }
     }
+    
+    func setIconForFilesInFolders(item: File) {
+        activityIndicator.startAnimating()
+        previewImage.image = nil
+        
+        if item.type == "dir" {
+            previewImage.image = UIImage(named: "folder")
+        } else if item.type == "file" {
+            let imageURLString = item.file
+            if let mimeType = item.mimeType, let urlString = imageURLString {
+                print("Setting icon for file in folder with mimeType: \(mimeType.lowercased())")
+                switch mimeType.lowercased() {
+                case "image/jpeg", "image/png":
+                    APIService.shared.fetchImage(from: urlString) { [weak self] result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let image):
+                                self?.previewImage.image = image
+                            case .failure:
+                                self?.previewImage.image = UIImage(named: "questionmark")
+                            }
+                            self?.activityIndicator.stopAnimating()
+                        }
+                    }
+                    return
+                case "application/pdf":
+                    previewImage.image = UIImage(named: "pdf")
+                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                    previewImage.image = UIImage(named: "excel")
+                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                    previewImage.image = UIImage(named: "powerpoint")
+                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                    previewImage.image = UIImage(named: "word")
+                default:
+                    previewImage.image = UIImage(systemName: "questionmark")
+                }
+            } else {
+                print("Missing mimeType or URL for file inside folder")
+                previewImage.image = UIImage(named: "questionmark")
+            }
+            activityIndicator.stopAnimating()
+        }
+        
+        if currentImageURL == item.file {
+            activityIndicator.stopAnimating()
+            return
+        }
+
+    }
+    
+    @objc func buttonTapped() {
+        print("Button")
+        delegate?.publishedFilesCell(self, didTapUnpublishedButton: unpublishedButton)
+    }
+    
+    
 }

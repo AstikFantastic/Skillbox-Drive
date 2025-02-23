@@ -6,7 +6,7 @@ protocol ImageViewProtocol: AnyObject {
 
 class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     
-    private let item: Items
+    private let item: PublishedFile
     private let presenter: ImagePresenter
     private let imageView = UIImageView()
     private let linkButton = UIButton(type: .system)
@@ -16,7 +16,7 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     
     private var panGestureRecognizer: UIPanGestureRecognizer!
     
-    init(presenter: ImagePresenter, item: Items) {
+    init(presenter: ImagePresenter, item: PublishedFile) {
         self.presenter = presenter
         self.item = item
         super.init(nibName: nil, bundle: nil)
