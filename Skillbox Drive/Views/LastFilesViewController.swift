@@ -6,7 +6,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     private var presenter: LastLoadedFilesPresenter!
     private var router: Router!
     var files: [PublishedFile] = []
-    var foldersData: [File] = []
+    var foldersData: [PublishedFile] = []
     let tableView = UITableView()
     
     let pullToRefreshControl = UIRefreshControl()
@@ -96,7 +96,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     }
 
     
-    func showFolderData(_ folders: [File]) {
+    func showFolderData(_ folders: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.foldersData = folders

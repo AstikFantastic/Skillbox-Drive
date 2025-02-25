@@ -216,8 +216,8 @@
 			children = (
 				88E595112D5D28C70016E224 /* OnboardingPresenter.swift */,
 				88E595102D5D28C70016E224 /* LoginPresenter.swift */,
-				88C1A9742D611CD400BA598A /* PublishedFilesPresenter.swift */,
 				88E595122D5D28C70016E224 /* ProfilePresenter.swift */,
+				88C1A9742D611CD400BA598A /* PublishedFilesPresenter.swift */,
 				881829A72D36CB5D00FB3516 /* LastLoadedFilesPresenter.swift */,
 				88E5950F2D5D28C70016E224 /* AllFilesPresenter.swift */,
 				883775022D3C397B00C61981 /* ImagePresenter.swift */,

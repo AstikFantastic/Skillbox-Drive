@@ -74,9 +74,8 @@ class ImagePresenter {
         }
     }
         
-        // Первый запрос: публикуем ресурс
         func publishResource(completion: @escaping (Result<Void, Error>) -> Void) {
-            let resourcePath = item.path
+            let resourcePath = item.path ?? ""
             let availableUntil = Int(Date().addingTimeInterval(3600).timeIntervalSince1970) // 1 час
             let settings: [String: Any] = [
                 "available_until": availableUntil,
@@ -107,9 +106,8 @@ class ImagePresenter {
             }
         }
         
-        // Второй запрос: получаем public_url из деталей ресурса
         func fetchPublicURL(completion: @escaping (Result<String, Error>) -> Void) {
-            let resourcePath = item.path
+            let resourcePath = item.path ?? ""
             apiService.fetchResourceDetails(oAuthToken: oAuthToken, path: resourcePath) { result in
                 DispatchQueue.main.async {
                     switch result {

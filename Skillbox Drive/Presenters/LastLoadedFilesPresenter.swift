@@ -4,7 +4,7 @@ protocol LastFilesView: AnyObject {
     func showLoading()
     func hideLoading()
     func showAllFiles(_ files: [PublishedFile])
-    func showFolderData(_ files: [File])
+    func showFolderData(_ files: [PublishedFile])
     func showError(_ error: Error)
 }
 

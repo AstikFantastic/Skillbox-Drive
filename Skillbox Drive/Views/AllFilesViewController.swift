@@ -6,8 +6,8 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var presenter: AllFilesPresenter!
     var router: Router!
-    var files: [File] = []
-    var foldersData: [File] = []
+    var files: [PublishedFile] = []
+    var foldersData: [PublishedFile] = []
     
     let tableView = UITableView()
     
@@ -27,6 +27,10 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
     
     private func setupUI() {
         title = "All files"
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        navigationItem.backBarButtonItem = backButton
+        
         setupActivityIndicator()
         tableView.backgroundColor = .clear
         view.addSubview(tableView)
@@ -68,7 +72,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    func showAllFiles(_ files: [File]) {
+    func showAllFiles(_ files: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.files = files
@@ -77,7 +81,7 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    func showFolderData(_ folders: [File]) {
+    func showFolderData(_ folders: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.foldersData = folders
@@ -108,11 +112,11 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
         let item = files[indexPath.row]
         let fileName = item.name
         let fileSize = presenter.formattedFileSize(from: item.size)
-        let creationDate = DateFormatter.formattedString(from: item.created ?? "")
+        let creationDate = DateFormatter.formattedString(from: item.created)
         cell.configureUnpublishButton(shouldShow: false)
         cell.configureNameLenght(-25)
         cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
-//        cell.setImage(item: item)
+        cell.setImage(item: item)
         
         return cell
     }
@@ -126,13 +130,13 @@ class AllFilesViewController: UIViewController, UITableViewDataSource, UITableVi
             switch mediaType {
             case "document":
                 if file.name.lowercased().hasSuffix(".pdf") {
-//                    router.navigateToPDFDetail(with: file)
+                    router.navigateToPDFDetail(with: file)
                 } else {
-//                    router.navigateToWebPage(with: file)
+                    router.navigateToWebPage(with: file)
                 }
             case "image":
                 print()
-//                router.navigateToFileDetail(with: file)
+                router.navigateToFileDetail(with: file)
             default:
                 print("Неизвестный тип файла")
             }

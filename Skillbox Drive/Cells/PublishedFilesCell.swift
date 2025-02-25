@@ -179,7 +179,7 @@ class PublishedFilesCell: UITableViewCell {
         }
     }
     
-    func setIconForFilesInFolders(item: File) {
+    func setIconForFilesInFolders(item: PublishedFile) {
         activityIndicator.startAnimating()
         previewImage.image = nil
         

@@ -200,7 +200,7 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         let titleAction = UIAlertAction(title: "Current image will be deleted", style: .default, handler: nil)
         titleAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
         let deleteAction = UIAlertAction(title: "Delete image", style: .destructive) { _ in
-            self.presenter.deleteFile(permanently: "true", path: self.item.path)
+            self.presenter.deleteFile(permanently: "true", path: self.item.path ?? "")
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(titleAction)

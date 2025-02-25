@@ -108,7 +108,7 @@ class APIService {
     }
     
     
-    func fetchFolderMetadata(oAuthToken: String, baseURL: String = APIEndpoint.baseURL.url, path: String, limit: Int, offset: Int, previewSize: String = "120x120", previewCrop: String = "true", completion: @escaping (Result<[File], Error>) -> Void) {
+    func fetchFolderMetadata(oAuthToken: String, baseURL: String, path: String, limit: Int, offset: Int, previewSize: String = "120x120", previewCrop: String = "true", completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
         guard var urlComponents = URLComponents(string: baseURL) else {
             completion(.failure(NSError(domain: "ApiError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -121,7 +121,7 @@ class APIService {
             URLQueryItem(name: "limit", value: "\(limit)"),
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "media_type", value: allMediaTypes),
-            URLQueryItem(name: "fields", value: "name,_embedded.items.path,_embedded.items.type,_embedded.items.name,_embedded.items.preview,_embedded.items.created,_embedded.items.modified,_embedded.items.mime_type,_embedded.items.size,_embedded.items.file, _embedded.items.publicURL"),
+            URLQueryItem(name: "fields", value: "name,_embedded.items.path,_embedded.items.type,_embedded.items.name,_embedded.items.preview,_embedded.items.created,_embedded.items.modified,_embedded.items.mime_type,_embedded.items.size,_embedded.items.file"),
             URLQueryItem(name: "preview_size", value: previewSize),
             URLQueryItem(name: "preview_crop", value: previewCrop)
         ]
@@ -154,9 +154,9 @@ class APIService {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let response = try decoder.decode(FolderResponseModel.self, from: data)
+                let response = try decoder.decode(PublishedFile.self, from: data)
                 print("Decoded response: \(response)")
-                completion(.success(response._embedded?.items ?? []))
+                completion(.success(response.embedded?.items ?? []))
             } catch {
                 print("Decoding error: \(error)")
                 completion(.failure(error))
@@ -401,10 +401,9 @@ extension APIService {
                                  limit: Int,
                                  offset: Int,
                                  sort: String = "created",
-                                 type: String,
                                  previewSize: String = "S",
                                  previewCrop: String = "true",
-                                 completion: @escaping (Result<[File], Error>) -> Void) {
+                                 completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
         // Если path не закодирован, закодируем его один раз
         let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? path
         
@@ -421,7 +420,6 @@ extension APIService {
             URLQueryItem(name: "limit", value: "\(limit)"),
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "media_type", value: allMediaTypes),
-            URLQueryItem(name: "type", value: type),
             URLQueryItem(name: "sort", value: sort)
         ]
         
@@ -454,8 +452,8 @@ extension APIService {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let folderResponse = try decoder.decode(FolderResponseModel.self, from: data)
-                let items = folderResponse._embedded?.items ?? []
+                let folderResponse = try decoder.decode(PublishedFile.self, from: data)
+                let items = folderResponse.embedded?.items ?? []
                 completion(.success(items))
             } catch {
                 print("Decoding error: \(error)")
@@ -465,39 +463,40 @@ extension APIService {
         
         task.resume()
     }
-    
-    // Удобные методы для файлов и папок
-    func fetchAllFiles(oAuthToken: String,
-                       baseURL: String,
-                       path: String,
-                       limit: Int,
-                       offset: Int,
-                       sort: String,
-                       completion: @escaping (Result<[File], Error>) -> Void) {
-        fetchAllFilesAndFolders(oAuthToken: oAuthToken,
-                                baseURL: baseURL,
-                                path: path,
-                                limit: limit,
-                                offset: offset,
-                                sort: sort,
-                                type: "file",
-                                completion: completion)
-    }
-    
-    func fetchAllDirs(oAuthToken: String,
-                      baseURL: String,
-                      path: String,
-                      limit: Int,
-                      offset: Int,
-                      sort: String,
-                      completion: @escaping (Result<[File], Error>) -> Void) {
-        fetchAllFilesAndFolders(oAuthToken: oAuthToken,
-                                baseURL: baseURL,
-                                path: path,
-                                limit: limit,
-                                offset: offset,
-                                sort: sort,
-                                type: "dir",
-                                completion: completion)
-    }
 }
+//
+//    // Удобные методы для файлов и папок
+//    func fetchAllFiles(oAuthToken: String,
+//                       baseURL: String,
+//                       path: String,
+//                       limit: Int,
+//                       offset: Int,
+//                       sort: String,
+//                       completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
+//        fetchAllFilesAndFolders(oAuthToken: oAuthToken,
+//                                baseURL: baseURL,
+//                                path: path,
+//                                limit: limit,
+//                                offset: offset,
+//                                sort: sort,
+//                                type: "file",
+//                                completion: completion)
+//    }
+//    
+//    func fetchAllDirs(oAuthToken: String,
+//                      baseURL: String,
+//                      path: String,
+//                      limit: Int,
+//                      offset: Int,
+//                      sort: String,
+//                      completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
+//        fetchAllFilesAndFolders(oAuthToken: oAuthToken,
+//                                baseURL: baseURL,
+//                                path: path,
+//                                limit: limit,
+//                                offset: offset,
+//                                sort: sort,
+//                                type: "dir",
+//                                completion: completion)
+//    }
+//}
