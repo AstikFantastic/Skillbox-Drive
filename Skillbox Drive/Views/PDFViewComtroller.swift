@@ -3,11 +3,11 @@ import PDFKit
 
 class PDFViewController: UIViewController, PDFViewProtocol {
     
-    private let item: Items
+    private let item: PublishedFile
     private let presenter: PDFPresenter
     private var pdfView: PDFView!
 
-    init(presenter: PDFPresenter, item: Items) {
+    init(presenter: PDFPresenter, item: PublishedFile) {
         self.presenter = presenter
         self.item = item
         super.init(nibName: nil, bundle: nil)

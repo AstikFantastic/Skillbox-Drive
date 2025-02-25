@@ -10,12 +10,13 @@ class Router {
     }
     
     func navigateToFileDetail(with item: PublishedFile) {
-        let imagePresenter = ImagePresenter(item: item, apiService: APIService())
+        guard let token = UserDefaults.standard.string(forKey: "userToken") else { return }
+        let imagePresenter = ImagePresenter(item: item, oAuthToken: token, apiService: APIService())
         let imageViewController = ImageViewController(presenter: imagePresenter, item: item)
         navigationController?.pushViewController(imageViewController, animated: true)
     }
     
-    func navigateToPDFDetail(with item: Items) {
+    func navigateToPDFDetail(with item: PublishedFile) {
         guard let filePath = item.file, let fileURL = URL(string: filePath) else {
             return
         }

@@ -6,7 +6,10 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     private var presenter: LastLoadedFilesPresenter!
     private var router: Router!
     var files: [PublishedFile] = []
+    var foldersData: [File] = []
     let tableView = UITableView()
+    
+    let pullToRefreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +23,22 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         }
         tableView.dataSource = self
         tableView.delegate = self
+        
+        pullToRefreshControl.addTarget(self, action: #selector(didPullToRefresh(_:)), for: .valueChanged)
+        tableView.refreshControl = pullToRefreshControl
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFileDeleted), name: NSNotification.Name("FileDeleted"), object: nil)
+    }
+    
+    @objc private func handleFileDeleted() {
+        // Например, можно перезагрузить данные
+        presenter.fetchLastLoadedFiles()
+        // Или просто обновить tableView, если данные уже обновлены
+        tableView.reloadData()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     private func setupUI() {
@@ -38,7 +57,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        tableView.register(AllFilesCell.self, forCellReuseIdentifier: AllFilesCell.identifier)
+        tableView.register(PublishedFilesCell.self, forCellReuseIdentifier: PublishedFilesCell.identifier)
     }
     
     func setupActivityIndicator() {
@@ -68,12 +87,22 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     
     func showAllFiles(_ files: [PublishedFile]) {
         DispatchQueue.main.async { [weak self] in
-            if files.isEmpty {
-                print("No files found.")
-            } else {
-                self?.files = files
-                self?.tableView.reloadData()
-            }
+            guard let self = self else { return }
+            self.files = files
+            self.foldersData.removeAll()
+            self.tableView.reloadData()
+            self.tableView.refreshControl?.endRefreshing()
+        }
+    }
+
+    
+    func showFolderData(_ folders: [File]) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.foldersData = folders
+            self.files.removeAll()
+            self.tableView.reloadData()
+            self.tableView.refreshControl = nil
         }
     }
     
@@ -85,6 +114,10 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
+    @objc private func didPullToRefresh(_ sender: UIRefreshControl) {
+        presenter.fetchLastLoadedFiles()
+    }
+    
     // MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -92,7 +125,7 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: AllFilesCell.identifier, for: indexPath) as? AllFilesCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PublishedFilesCell.identifier, for: indexPath) as? PublishedFilesCell else {
             return UITableViewCell()
         }
         
@@ -100,8 +133,9 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         let fileName = item.name
         let fileSize = presenter.formattedFileSize(from: item.size)
         let creationDate = DateFormatter.formattedString(from: item.created)
-        
-        cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)        
+        cell.configureUnpublishButton(shouldShow: false)
+        cell.configureNameLenght(-25)
+        cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
         cell.setImage(item: item)
         
         return cell
@@ -112,14 +146,20 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let file = files[indexPath.row]
         print("Выбран файл: \(file.name)")
-        if file.mimeType == "application/pdf" {
-//            router.navigateToPDFDetail(with: file)
-        } else if file.mimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.mimeType == "application/vnd.openxmlformats-officedocument.presentationml.presentation" {
-            router.navigateToWebPage(with: file)
-        } else {
-            router.navigateToFileDetail(with: file)
+        if let mediaType = file.mediaType {
+            switch mediaType {
+            case "document":
+                if file.name.lowercased().hasSuffix(".pdf") {
+                    router.navigateToPDFDetail(with: file)
+                } else {
+                    router.navigateToWebPage(with: file)
+                }
+            case "image":
+                router.navigateToFileDetail(with: file)
+            default:
+                print("%)")
+            }
         }
-        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

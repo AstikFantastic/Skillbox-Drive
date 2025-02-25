@@ -17,7 +17,7 @@ struct PublishedFile: Codable {
     let type: String?
     let mediaType: String?
     let mimeType: String?
-    let publicURL: String?
+    var publicURL: String?
     
     enum CodingKeys: String, CodingKey {
         case name, size, created, preview, path, type, file, mediaType
@@ -25,4 +25,7 @@ struct PublishedFile: Codable {
         case publicURL = "public_url"
     }
 }
+
+
+
 

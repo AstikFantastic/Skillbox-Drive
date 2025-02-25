@@ -27,11 +27,15 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     }
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+        
+            presenter.attachView(self)
+            presenter.loadImage()
+            presenter.updateNavigationBar()
+        
         setupUI()
-        presenter.attachView(self)
-        presenter.loadImage()
-        presenter.updateNavigationBar()
+
         
         imageView.isUserInteractionEnabled = true
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
@@ -60,7 +64,7 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         linkButton.addTarget(self, action: #selector(shareFoto), for: .touchUpInside)
         
         deleteButton.setImage(UIImage(named: "trash"), for: .normal)
-        deleteButton.tintColor = .black
+        deleteButton.tintColor = .red
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         deleteButton.addTarget(self, action: #selector(deleteFile), for: .touchUpInside)
         
@@ -99,7 +103,7 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
                 let scaleX = self.view.bounds.width / self.imageView.frame.width * 2 // Увеличиваем на 1.5 раза
                 let scaleY = self.view.bounds.height / self.imageView.frame.height * 2 // Увеличиваем на 1.5 раза
                 let scale = max(scaleX, scaleY)  // Увеличиваем изображение на большее значение по оси X или Y
-
+                
                 // Применяем масштабирование
                 self.imageView.transform = CGAffineTransform(scaleX: scale, y: scale)
                 
@@ -114,23 +118,23 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     }
     
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-            // Перемещаем изображение только в том случае, если оно увеличено
-            guard isFullScreen else { return }
+        // Перемещаем изображение только в том случае, если оно увеличено
+        guard isFullScreen else { return }
+        
+        let translation = gesture.translation(in: view)
+        
+        // Изменяем позицию изображения в зависимости от движения пальца
+        if gesture.state == .changed {
+            imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
             
-            let translation = gesture.translation(in: view)
-            
-            // Изменяем позицию изображения в зависимости от движения пальца
-            if gesture.state == .changed {
-                imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
-                
-                gesture.setTranslation(.zero, in: view)
-            }
+            gesture.setTranslation(.zero, in: view)
         }
+    }
     
     func updateFrame(_ frame: CGRect) {
-//        UIView.animate(withDuration: 0.3) {
-//            self.imageView.frame = frame
-//        }
+        //        UIView.animate(withDuration: 0.3) {
+        //            self.imageView.frame = frame
+        //        }
     }
     
     func updateNavigationBar() {
@@ -143,17 +147,60 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     }
     
     @objc private func shareFoto() {
-        guard let image = imageView.image  else { return }
-        let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-        present(activityController, animated: true)
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let shareFileAction = UIAlertAction(title: "Поделиться файлом", style: .default) { _ in
+            guard let image = self.imageView.image else { return }
+            let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+            self.present(activityController, animated: true, completion: nil)
+        }
+        
+        let shareLinkAction = UIAlertAction(title: "Поделиться ссылкой", style: .default) { [self] _ in
+                    // Сначала публикуем ресурс
+                    presenter.publishResource { [weak self] publishResult in
+                        guard let self = self else { return }
+                        switch publishResult {
+                        case .success:
+                            // Затем получаем public_url
+                            self.presenter.fetchPublicURL { fetchResult in
+                                DispatchQueue.main.async {
+                                    switch fetchResult {
+                                    case .success(let publicLink):
+                                        let activityController = UIActivityViewController(activityItems: [publicLink], applicationActivities: nil)
+                                        self.present(activityController, animated: true, completion: nil)
+                                    case .failure(let error):
+                                        let alert = UIAlertController(title: "Ошибка", message: error.localizedDescription, preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                                        self.present(alert, animated: true)
+                                    }
+                                }
+                            }
+                        case .failure(let error):
+                            DispatchQueue.main.async {
+                                let alert = UIAlertController(title: "Ошибка", message: error.localizedDescription, preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                                self.present(alert, animated: true)
+                            }
+                        }
+                    }
+                }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(shareFileAction)
+        alert.addAction(shareLinkAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
     }
+
     
     @objc private func deleteFile() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let titleAction = UIAlertAction(title: "Current image will be deleted", style: .default, handler: nil)
         titleAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
         let deleteAction = UIAlertAction(title: "Delete image", style: .destructive) { _ in
-            self.deleteImage()
+            self.presenter.deleteFile(permanently: "true", path: self.item.path)
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(titleAction)

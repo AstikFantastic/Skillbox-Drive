@@ -21,7 +21,7 @@ class PublishedFilesPresenter {
         self.apiService = apiService
     }
     
-    func fetchLastLoadedFiles(limit: Int = 100, offset: Int = 0) {
+    func fetchLastLoadedFiles(limit: Int = 100, offset: Int = 0, baseURL: String = APIEndpoint.publicResources.url) {
         view?.showLoading()
         
         let dispatchGroup = DispatchGroup()
@@ -29,7 +29,7 @@ class PublishedFilesPresenter {
         var dirs: [PublishedFile] = []
         
         dispatchGroup.enter()
-        apiService.fetchFiles(oAuthToken: oAuthToken, limit: limit) { result in
+        apiService.fetchFiles(oAuthToken: oAuthToken, baseURL: baseURL, limit: limit, offset: 0) { result in
             switch result {
             case .success(let fetchedFiles):
                 files = fetchedFiles
@@ -40,7 +40,7 @@ class PublishedFilesPresenter {
         }
         
         dispatchGroup.enter()
-        apiService.fetchDirs(oAuthToken: oAuthToken, limit: limit) { result in
+        apiService.fetchDirs(oAuthToken: oAuthToken, baseURL: baseURL, limit: limit, offset: 0) { result in
             switch result {
             case .success(let fetchedDirs):
                 dirs = fetchedDirs
@@ -69,11 +69,11 @@ class PublishedFilesPresenter {
         }
     }
     
-    func fetchFolderContents(path: String, limit: Int = 100, offset: Int = 0, previewSize: String = "120x120", previewCrop: String = "true") {
+    func fetchFolderContents(path: String, limit: Int = 100, baseURL: String = APIEndpoint.publicResources.url, offset: Int = 0, previewSize: String = "120x120", previewCrop: String = "true") {
         view?.showLoading()
         print("Fetching contents for folder at path: \(path)")
         
-        apiService.fetchFolderMetadata(oAuthToken: oAuthToken, path: path, limit: limit, offset: offset, previewSize: previewSize, previewCrop: previewCrop) { result in
+        apiService.fetchFolderMetadata(oAuthToken: oAuthToken, baseURL: baseURL, path: path, limit: limit, offset: offset, previewSize: previewSize, previewCrop: previewCrop) { result in
             switch result {
             case .success(let fetchedFiles):
                 print("Successfully fetched folder contents: \(fetchedFiles)")
@@ -87,7 +87,7 @@ class PublishedFilesPresenter {
     }
     
     func unpublishRespopnse(path: String) {
-        apiService.unpublishResource(oAuthToken: oAuthToken, path: path) { result in
+        apiService.unpublishResource(oAuthToken: oAuthToken, baseURL: APIEndpoint.unpublish.url, path: path) { result in
             switch result {
             case .success:
                 DispatchQueue.main.async {
@@ -102,7 +102,6 @@ class PublishedFilesPresenter {
             }
         }
     }
-    
     
     func formattedFileSize(from size: Int?) -> String {
         guard let size = size else { return "Unknown size" }

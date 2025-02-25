@@ -3,7 +3,8 @@ import UIKit
 protocol FilesView: AnyObject {
     func showLoading()
     func hideLoading()
-    func showAllFiles(_ files: [PublishedFile])
+    func showAllFiles(_ files: [File])
+    func showFolderData(_ files: [File])
     func showError(_ error: Error)
 }
 
@@ -19,15 +20,63 @@ class AllFilesPresenter {
         self.apiService = apiService
     }
     
-    func fetchAllFiles(limit: Int = 100, offset: Int = 0) {
+    func fetchAllFiles(path: String = "disk:/", limit: Int = 100, offset: Int = 0, baseURL: String = APIEndpoint.resources.url, sort: String = "created") {
         view?.showLoading()
-        apiService.fetchAllFiles(oAuthToken: oAuthToken, limit: limit, offset: offset) { [weak self] result in
-            self?.view?.hideLoading()
+        
+        let dispatchGroup = DispatchGroup()
+        var files: [File] = []
+        var dirs: [File] = []
+        
+        dispatchGroup.enter()
+        apiService.fetchAllFiles(oAuthToken: oAuthToken,
+                                  baseURL: baseURL,
+                                  path: path,
+                                  limit: limit,
+                                  offset: offset,
+                                  sort: sort,
+                                  completion: { result in
             switch result {
-            case .success(let data):
-                self?.view?.showAllFiles(data)
+            case .success(let fetchedFiles):
+                files = fetchedFiles
             case .failure(let error):
-                self?.view?.showError(error)
+                print("Ошибка получения файлов: \(error)")
+            }
+            dispatchGroup.leave()
+        })
+        
+        dispatchGroup.enter()
+        apiService.fetchAllDirs(oAuthToken: oAuthToken,
+                                 baseURL: baseURL,
+                                 path: path,
+                                 limit: limit,
+                                 offset: offset,
+                                 sort: sort,
+                                 completion: { result in
+            switch result {
+            case .success(let fetchedDirs):
+                dirs = fetchedDirs
+            case .failure(let error):
+                print("Ошибка получения папок: \(error)")
+            }
+            dispatchGroup.leave()
+        })
+        
+        dispatchGroup.notify(queue: .main) {
+            let allItems = dirs + files
+            self.view?.hideLoading()
+            if !allItems.isEmpty {
+                // Можно сохранить в кэш, если нужно:
+                // CoreDataManager.shared.savePublishedFiles(allItems)
+                self.view?.showAllFiles(allItems)
+            } else {
+//                let cachedFiles = CoreDataManager.shared.fetchPublishedFiles()
+//                if !cachedFiles.isEmpty {
+//                    print("Загружаем данные из кэша")
+//                    self.view?.showAllFiles(cachedFiles)
+//                } else {
+//                    self.view?.showError(NSError(domain: "APIError", code: 0,
+//                                                 userInfo: [NSLocalizedDescriptionKey: "Нет доступных данных"]))
+//                }
             }
         }
     }
@@ -46,5 +95,3 @@ class AllFilesPresenter {
         }
     }
 }
-
-

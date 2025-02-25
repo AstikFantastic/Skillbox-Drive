@@ -7,7 +7,6 @@ class CoreDataManager {
     let persistentContainer: NSPersistentContainer
     
     private init() {
-        // Используйте имя модели, которое вы задали (без расширения .xcdatamodeld)
         persistentContainer = NSPersistentContainer(name: "PublishedFilesModel")
         persistentContainer.loadPersistentStores { storeDescription, error in
             if let error = error {
@@ -20,7 +19,6 @@ class CoreDataManager {
         return persistentContainer.viewContext
     }
     
-    // Сохранение контекста
     func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -37,7 +35,6 @@ extension CoreDataManager {
     func savePublishedFiles(_ files: [PublishedFile]) {
         let context = persistentContainer.viewContext
         
-        // Удаляем старый кэш (если нужно)
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "PublishedFileEntity")
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
@@ -46,7 +43,6 @@ extension CoreDataManager {
             print("Ошибка удаления старого кэша: \(error)")
         }
         
-        // Сохраняем новые данные
         for file in files {
             if let entity = NSEntityDescription.insertNewObject(forEntityName: "PublishedFileEntity", into: context) as? PublishedFileEntity {
                 entity.name = file.name

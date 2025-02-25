@@ -25,6 +25,10 @@ class PublishedFilesCell: UITableViewCell {
             unpublishedButton.isHidden = !shouldShow
     }
     
+    private var fileNameTrailingConstraint: NSLayoutConstraint?
+    
+    
+    
     public var filePath: String?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -68,9 +72,11 @@ class PublishedFilesCell: UITableViewCell {
         fileName.lineBreakMode = .byTruncatingMiddle
         contentView.addSubview(fileName)
         fileName.translatesAutoresizingMaskIntoConstraints = false
+        
+        fileNameTrailingConstraint = fileName.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100)
+        
         NSLayoutConstraint.activate([
             fileName.leadingAnchor.constraint(equalTo: previewImage.trailingAnchor, constant: 10),
-            fileName.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
             fileName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
         ])
         
@@ -103,7 +109,11 @@ class PublishedFilesCell: UITableViewCell {
             unpublishedButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             unpublishedButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
         ])
-        
+        fileNameTrailingConstraint?.isActive = true
+    }
+    
+    func configureNameLenght(_ constant: CGFloat) {
+        fileNameTrailingConstraint?.constant = constant
     }
     
     func setupCell(fileName: String, fileSize: String, creationDate: String) {

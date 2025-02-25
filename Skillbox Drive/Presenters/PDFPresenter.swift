@@ -8,11 +8,11 @@ protocol PDFViewProtocol: AnyObject {
 }
 
 class PDFPresenter {
-    private let item: Items
+    private let item: PublishedFile
     private let pdfFile: PDFModel
     weak var view: PDFViewProtocol?
     
-    init(item: Items, pdfFile: PDFModel) {
+    init(item: PublishedFile, pdfFile: PDFModel) {
         self.item = item
         self.pdfFile = pdfFile
     }
