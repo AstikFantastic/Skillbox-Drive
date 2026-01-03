@@ -5,6 +5,17 @@ Skillbox-Drive is an iOS application that provides access to user files stored o
 The app demonstrates work with OAuth authentication, REST API, asynchronous networking,
 local data caching, and a clear application flow built using MVP architecture.
 
+## Screenshots
+
+<p float="left">
+  <img src="Screenshots/1.png" width="250" />
+  <img src="Screenshots/2.png" width="250" />
+  <img src="Screenshots/3.png" width="250" />
+    <img src="Screenshots/4.png" width="250" />
+      <img src="Screenshots/5.png" width="250" />
+</p>
+
+
 ## General Information
 - Secure access to Yandex Disk via OAuth authentication
 - Browsing files and directories stored on the disk
