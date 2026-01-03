@@ -8,11 +8,11 @@ local data caching, and a clear application flow built using MVP architecture.
 ## Screenshots
 
 <p float="left">
-  <img src="Screenshots/1.png" width="250" />
-  <img src="Screenshots/2.png" width="250" />
-  <img src="Screenshots/3.png" width="250" />
-    <img src="Screenshots/4.png" width="250" />
-      <img src="Screenshots/5.png" width="250" />
+  <img src="ScreenShots/1.png" width="250" />
+  <img src="ScreenShots/2.png" width="250" />
+  <img src="ScreenShots/3.png" width="250" />
+    <img src="ScreenShots/4.png" width="250" />
+      <img src="ScreenShots/5.png" width="250" />
 </p>
 
 
