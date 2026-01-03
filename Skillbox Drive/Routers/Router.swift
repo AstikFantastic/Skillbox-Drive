@@ -16,12 +16,18 @@ class Router {
         navigationController?.pushViewController(imageViewController, animated: true)
     }
     
+    func navigateToRename(with item: PublishedFile) {
+        let renameViewController = RenameViewController()
+        navigationController?.pushViewController(renameViewController, animated: true)
+    }
+    
     func navigateToPDFDetail(with item: PublishedFile) {
         guard let filePath = item.file, let fileURL = URL(string: filePath) else {
             return
         }
-        let pdfPage = PDFModel(name: item.name, fileURL: fileURL)
-        let pdfPresenter = PDFPresenter(item: item, pdfFile: pdfPage)
+        guard let token = UserDefaults.standard.string(forKey: "userToken") else { return }
+        let pdfPage = PDFModel(name: item.name ?? "", fileURL: fileURL)
+        let pdfPresenter = PDFPresenter(item: item, pdfFile: pdfPage, oAuthToken: token, apiService: APIService())
         let pdfViewController = PDFViewController(presenter: pdfPresenter, item: item)
         navigationController?.pushViewController(pdfViewController, animated: true)
     }
@@ -30,9 +36,10 @@ class Router {
         guard let filePath = item.file, let fileURL = URL(string: filePath) else {
             return
         }
-        let webPage = OfficeModel(name: item.name, url: fileURL)
-        let presenter = OfficePresenter(item: item, page: webPage)
-        let webViewController = OfficeViewController(presenter: presenter, item: item)
+        guard let token = UserDefaults.standard.string(forKey: "userToken") else { return }
+        let webPage = OfficeModel(name: item.name ?? "", url: fileURL)
+        let presenter = OfficePresenter(item: item, page: webPage, oAuthToken: token, apiService: APIService())
+        let webViewController = OfficeViewController(presenter: presenter, item: item, apiService: APIService())
         navigationController?.pushViewController(webViewController, animated: true)
     }
     

@@ -21,7 +21,7 @@ class LoginViewController: UIViewController, LoginViewProtocol {
         logoImage.image = UIImage(named: "лого")
         logoImage.contentMode = .scaleAspectFill
         
-        button.setTitle("Войти", for: .normal)
+        button.setTitle("LOG IN", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont(name: "Graphik", size: 16)
         button.backgroundColor = UIColor(red: 56/255, green: 63/255, blue: 245/255, alpha: 1)

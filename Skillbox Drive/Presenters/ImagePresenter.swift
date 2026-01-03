@@ -55,11 +55,9 @@ class ImagePresenter {
                 switch result {
                 case .success:
                     print("File deleted")
-                    // Закрываем текущий view controller
                     if let vc = self.view as? UIViewController {
                         vc.navigationController?.popViewController(animated: true)
                     }
-                    // Уведомляем родительский экран о том, что файл удалён и таблица должна обновиться
                     NotificationCenter.default.post(name: NSNotification.Name("FileDeleted"), object: nil)
                     
                 case .failure(let error):
@@ -73,72 +71,104 @@ class ImagePresenter {
             }
         }
     }
-        
-        func publishResource(completion: @escaping (Result<Void, Error>) -> Void) {
-            let resourcePath = item.path ?? ""
-            let availableUntil = Int(Date().addingTimeInterval(3600).timeIntervalSince1970) // 1 час
-            let settings: [String: Any] = [
-                "available_until": availableUntil,
-                "accesses": [
-                    [
-                        "type": "macro",
-                        "macros": ["all"],
-                        "rights": ["read"]
-                    ]
+    
+    func publishResource(completion: @escaping (Result<Void, Error>) -> Void) {
+        let resourcePath = item.path ?? ""
+        let availableUntil = Int(Date().addingTimeInterval(3600).timeIntervalSince1970) // 1 час
+        let settings: [String: Any] = [
+            "available_until": availableUntil,
+            "accesses": [
+                [
+                    "type": "macro",
+                    "macros": ["all"],
+                    "rights": ["read"]
                 ]
             ]
-            
-            apiService.publishResource(oAuthToken: oAuthToken,
-                                       baseURL: APIEndpoint.publish.url,
-                                       path: resourcePath,
-                                       allowAddressAccess: true,
-                                       publicSettings: settings) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        print("Публикация успешна")
-                        completion(.success(()))
-                    case .failure(let error):
-                        print("Ошибка публикации: \(error.localizedDescription)")
-                        completion(.failure(error))
-                    }
-                }
-            }
-        }
+        ]
         
-        func fetchPublicURL(completion: @escaping (Result<String, Error>) -> Void) {
-            let resourcePath = item.path ?? ""
-            apiService.fetchResourceDetails(oAuthToken: oAuthToken, path: resourcePath) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let publicLink):
-                        print("Получен public_url: \(publicLink)")
-                        completion(.success(publicLink))
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
+        apiService.publishResource(oAuthToken: oAuthToken, baseURL: APIEndpoint.publish.url, path: resourcePath, allowAddressAccess: true, publicSettings: settings) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    print("Публикация успешна")
+                    completion(.success(()))
+                case .failure(let error):
+                    print("Ошибка публикации: \(error.localizedDescription)")
+                    completion(.failure(error))
                 }
             }
         }
-
-
-func updateNavigationBar() {
-    view?.updateNavigationBar()
-}
-
-func onImagetapped() {
-    model.isFullScreen.toggle()
-    
-    let newFrame: CGRect
-    
-    if model.isFullScreen {
-        newFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-    } else {
-        newFrame = CGRect(x: 50, y: 100, width: 300, height: 300)
     }
-    if let view = view as? ImageViewProtocol {
-        view.updateFrame(newFrame)
+    
+    func fetchPublicURL(completion: @escaping (Result<String, Error>) -> Void) {
+        let resourcePath = item.path ?? ""
+        apiService.fetchResourceDetails(oAuthToken: oAuthToken, path: resourcePath) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let publicLink):
+                    print("Получен public_url: \(publicLink)")
+                    completion(.success(publicLink))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
     }
-}
+    
+    func renameFile(newName: String) {
+         guard let oldPath = item.path else { return }
+         let directory = (oldPath as NSString).deletingLastPathComponent
+         let newPath = directory + "/" + newName
+         
+         apiService.moveResource(oAuthToken: oAuthToken, baseURL: APIEndpoint.rename.url, from: oldPath, to: newPath, overwrite: false, fields: "name,size,created,path,media_type,public_url") { [weak self] result in
+             DispatchQueue.main.async {
+                 switch result {
+                 case .success(let publishedFile):
+                     self?.apiService.fetchResourceDetailsNameAndCreated(oAuthToken: self!.oAuthToken, path: newPath) { result in
+                         DispatchQueue.main.async {
+                             switch result {
+                             case .success(let json):
+                                 if let updatedName = json["name"] as? String {
+                                     self?.item = publishedFile.withNewNameAndDate(updatedName)
+                                     if let vc = self?.view as? ImageViewController {
+                                         vc.item = self!.item
+                                         vc.navigationItem.title = updatedName
+                                         vc.updateNavigationBar()
+                                     }
+                                 } else {
+                                     self?.item = publishedFile
+                                     if let vc = self?.view as? ImageViewController {
+                                         vc.item = self!.item
+                                         vc.navigationItem.title = publishedFile.name
+                                         vc.updateNavigationBar()
+                                     }
+                                 }
+                             case .failure(let error):
+                                 print("Ошибка запроса обновлённой метаинформации: \(error)")
+                                 self?.item = publishedFile
+                                 if let vc = self?.view as? ImageViewController {
+                                     vc.item = self!.item
+                                     vc.navigationItem.title = publishedFile.name
+                                     vc.updateNavigationBar()
+                                 }
+                             }
+                         }
+                     }
+                 case .failure(let error):
+                     print("Ошибка при переименовании: \(error)")
+                     if let vc = self?.view as? UIViewController {
+                         let alert = UIAlertController(title: "Ошибка", message: error.localizedDescription, preferredStyle: .alert)
+                         alert.addAction(UIAlertAction(title: "OK", style: .default))
+                         vc.present(alert, animated: true, completion: nil)
+                     }
+                 }
+             }
+         }
+     }
+
+    func updateNavigationBar() {
+        view?.updateNavigationBar()
+    }
+    
 }
 

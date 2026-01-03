@@ -1,5 +1,10 @@
 import UIKit
 
+enum APIError: Error {
+    case invalidURL
+    case noData
+}
+
 class APIService {
     
     static let shared = APIService()
@@ -42,7 +47,7 @@ class APIService {
     
     func fetchPublicFiles(oAuthToken: String, baseURL: String = APIEndpoint.baseURL.url, limit: Int , offset: Int, type: String, previewSize: String = "S", previewCrop: String = "true",
                           completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-
+        
         guard var urlComponents = URLComponents(string: baseURL) else {
             completion(.failure(NSError(domain: "ApiError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -191,10 +196,10 @@ class APIService {
         }
         task.resume()
     }
-
+    
     
     func unpublishResource(oAuthToken: String, baseURL: String, path: String, completion: @escaping (Result<Void, Error>) -> Void) {
-
+        
         guard var urlComponents = URLComponents(string: baseURL) else {
             completion(.failure(NSError(domain: "ApiError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -235,7 +240,7 @@ class APIService {
         
         task.resume()
     }
-
+    
     func deleteResource(oAuthToken: String, baseURL: String, permanently: String, path: String, completion: @escaping (Result<Void, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: baseURL) else {
             completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -278,11 +283,7 @@ class APIService {
         
         task.resume()
     }
-
     
-    }
-
-extension APIService {
     func publishResource(oAuthToken: String,
                          baseURL: String,
                          path: String,
@@ -393,30 +394,67 @@ extension APIService {
         }
         task.resume()
     }
-}
-extension APIService {
-    func fetchAllFilesAndFolders(oAuthToken: String,
-                                 baseURL: String,
-                                 path: String,
-                                 limit: Int,
-                                 offset: Int,
-                                 sort: String = "created",
-                                 previewSize: String = "S",
-                                 previewCrop: String = "true",
-                                 completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-        // Если path не закодирован, закодируем его один раз
-        let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? path
-        
-        guard var urlComponents = URLComponents(string: baseURL) else {
+    
+    func fetchResourceDetailsNameAndCreated(oAuthToken: String,
+                                            path: String,
+                                            completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        guard var urlComponents = URLComponents(string: APIEndpoint.resources.url) else {
             completion(.failure(NSError(domain: "APIError", code: 400,
                                         userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "path", value: path),
+            URLQueryItem(name: "fields", value: "name")
+        ]
+        
+        guard let url = urlComponents.url else {
+            completion(.failure(NSError(domain: "APIError", code: 400,
+                                        userInfo: [NSLocalizedDescriptionKey: "Invalid URL Components"])))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            guard let data = data, !data.isEmpty else {
+                completion(.failure(NSError(domain: "APIError", code: 500,
+                                            userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                return
+            }
+            
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    completion(.success(json))
+                } else {
+                    completion(.failure(NSError(domain: "APIError", code: 500,
+                                                userInfo: [NSLocalizedDescriptionKey: "Invalid JSON structure"])))
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    func fetchAllFilesAndFolders(oAuthToken: String, baseURL: String, path: String, limit: Int, offset: Int, sort: String = "created", previewSize: String = "S", previewCrop: String = "true", completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
+        
+        guard var urlComponents = URLComponents(string: baseURL) else {
+            completion(.failure(NSError(domain: "APIError", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
         
         let allMediaTypes = "document,image,spreadsheet"
         
         urlComponents.queryItems = [
-            URLQueryItem(name: "path", value: encodedPath),
+            URLQueryItem(name: "path", value: path),
             URLQueryItem(name: "limit", value: "\(limit)"),
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "media_type", value: allMediaTypes),
@@ -463,40 +501,114 @@ extension APIService {
         
         task.resume()
     }
+    
+    func moveResource(oAuthToken: String, baseURL: String, from sourcePath: String, to destinationPath: String, overwrite: Bool = false, fields: String = "name,size,created,path,media_type,public_url", completion: @escaping (Result<PublishedFile, Error>) -> Void) {
+        guard var urlComponents = URLComponents(string: baseURL ) else {
+            completion(.failure(APIError.invalidURL))
+            return
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "from", value: sourcePath),
+            URLQueryItem(name: "path", value: destinationPath),
+            URLQueryItem(name: "overwrite", value: overwrite ? "true" : "false"),
+            URLQueryItem(name: "fields", value: "name,size,created,path,media_type,public_url,_embedded.items.path,_embedded.items.type,_embedded.items.name,_embedded.items.preview,_embedded.items.created,_embedded.items.modified,_embedded.items.mime_type,_embedded.items.size,_embedded.items.file")
+        ]
+        
+        guard let url = urlComponents.url else {
+            completion(.failure(APIError.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(APIError.noData))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let publishedFile = try decoder.decode(PublishedFile.self, from: data)
+                completion(.success(publishedFile))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    func fetchDownloadLink(oAuthToken: String, path: String, baseURL: String, completion: @escaping (Result<String, Error>) -> Void) {
+        
+        guard var urlComponents = URLComponents(string: baseURL) else {
+            completion(.failure(APIError.invalidURL))
+            return
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "path", value: path),
+            URLQueryItem(name: "fields", value: "name,size,created,path,media_type,public_url,_embedded.items.path,_embedded.items.type,_embedded.items.name,_embedded.items.preview,_embedded.items.created,_embedded.items.modified,_embedded.items.mime_type,_embedded.items.size,_embedded.items.file")
+        ]
+        
+        guard let url = urlComponents.url else {
+            completion(.failure(APIError.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            guard let data = data else {
+                completion(.failure(APIError.noData))
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                let downloadResponse = try decoder.decode(DownloadURLResponse.self, from: data)
+                completion(.success(downloadResponse.href))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    func downloadFile(oAuthToken: String, from downloadHref: String, completion: @escaping (Result<Data, Error>) -> Void) {
+        guard let url = URL(string: downloadHref) else {
+            completion(.failure(APIError.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("OAuth \(oAuthToken)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            guard let data = data else {
+                completion(.failure(APIError.noData))
+                return
+            }
+            completion(.success(data))
+        }
+        task.resume()
+    }
 }
-//
-//    // Удобные методы для файлов и папок
-//    func fetchAllFiles(oAuthToken: String,
-//                       baseURL: String,
-//                       path: String,
-//                       limit: Int,
-//                       offset: Int,
-//                       sort: String,
-//                       completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-//        fetchAllFilesAndFolders(oAuthToken: oAuthToken,
-//                                baseURL: baseURL,
-//                                path: path,
-//                                limit: limit,
-//                                offset: offset,
-//                                sort: sort,
-//                                type: "file",
-//                                completion: completion)
-//    }
-//    
-//    func fetchAllDirs(oAuthToken: String,
-//                      baseURL: String,
-//                      path: String,
-//                      limit: Int,
-//                      offset: Int,
-//                      sort: String,
-//                      completion: @escaping (Result<[PublishedFile], Error>) -> Void) {
-//        fetchAllFilesAndFolders(oAuthToken: oAuthToken,
-//                                baseURL: baseURL,
-//                                path: path,
-//                                limit: limit,
-//                                offset: offset,
-//                                sort: sort,
-//                                type: "dir",
-//                                completion: completion)
-//    }
-//}

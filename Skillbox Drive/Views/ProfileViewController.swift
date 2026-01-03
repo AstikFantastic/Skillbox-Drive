@@ -75,7 +75,7 @@ class ProfileViewController: UIViewController, ProfileViewProtocol {
         publishedFilesButton.layer.borderWidth = 0.33
         publishedFilesButton.layer.borderColor = UIColor.lightGray.cgColor
         publishedFilesButton.layer.cornerRadius = 10
-        publishedFilesButton.backgroundColor = .white // Белый фон
+        publishedFilesButton.backgroundColor = .white
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 17.5, bottom: 0, trailing: 0)
         publishedFilesButton.configuration = config

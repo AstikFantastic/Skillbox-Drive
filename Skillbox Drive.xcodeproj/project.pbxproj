@@ -14,7 +14,6 @@
 		8829130C2D288AA500C58A86 /* LastFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8829130B2D288AA500C58A86 /* LastFilesViewController.swift */; };
 		882913102D288D0A00C58A86 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8829130F2D288D0A00C58A86 /* APIService.swift */; };
 		882D3E832D69C539006F3A95 /* PublishedFilesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882D3E822D69C539006F3A95 /* PublishedFilesCell.swift */; };
-		882D3E8A2D6A59E3006F3A95 /* FolderResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882D3E892D6A59E3006F3A95 /* FolderResponseModel.swift */; };
 		883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883774FE2D3C342800C61981 /* ImageViewController.swift */; };
 		883775032D3C397B00C61981 /* ImagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775022D3C397B00C61981 /* ImagePresenter.swift */; };
 		883775082D3C3A7300C61981 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883775072D3C3A7300C61981 /* Router.swift */; };
@@ -36,6 +35,8 @@
 		88C1A9732D611CC000BA598A /* PublishedFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A9722D611CC000BA598A /* PublishedFilesViewController.swift */; };
 		88C1A9752D611CD400BA598A /* PublishedFilesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A9742D611CD400BA598A /* PublishedFilesPresenter.swift */; };
 		88C1A9772D611F1000BA598A /* PublishedFilesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88C1A9762D611F1000BA598A /* PublishedFilesModel.swift */; };
+		88CE62AA2D70A3A500102360 /* DownloadedResponceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CE62A92D70A3A500102360 /* DownloadedResponceModel.swift */; };
+		88D1799C2D6F109E0008B30B /* RenameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D1799B2D6F109D0008B30B /* RenameViewController.swift */; };
 		88E595072D5D10860016E224 /* AllFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595022D5D10860016E224 /* AllFilesViewController.swift */; };
 		88E595082D5D10860016E224 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595032D5D10860016E224 /* LoginViewController.swift */; };
 		88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E595042D5D10860016E224 /* OnboardingViewController.swift */; };
@@ -55,7 +56,6 @@
 		8829130B2D288AA500C58A86 /* LastFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFilesViewController.swift; sourceTree = "<group>"; };
 		8829130F2D288D0A00C58A86 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		882D3E822D69C539006F3A95 /* PublishedFilesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedFilesCell.swift; sourceTree = "<group>"; };
-		882D3E892D6A59E3006F3A95 /* FolderResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderResponseModel.swift; sourceTree = "<group>"; };
 		883774FE2D3C342800C61981 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		883775022D3C397B00C61981 /* ImagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePresenter.swift; sourceTree = "<group>"; };
 		883775072D3C3A7300C61981 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
@@ -79,6 +79,8 @@
 		88C1A9722D611CC000BA598A /* PublishedFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedFilesViewController.swift; sourceTree = "<group>"; };
 		88C1A9742D611CD400BA598A /* PublishedFilesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedFilesPresenter.swift; sourceTree = "<group>"; };
 		88C1A9762D611F1000BA598A /* PublishedFilesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedFilesModel.swift; sourceTree = "<group>"; };
+		88CE62A92D70A3A500102360 /* DownloadedResponceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedResponceModel.swift; sourceTree = "<group>"; };
+		88D1799B2D6F109D0008B30B /* RenameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameViewController.swift; sourceTree = "<group>"; };
 		88E595022D5D10860016E224 /* AllFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFilesViewController.swift; sourceTree = "<group>"; };
 		88E595032D5D10860016E224 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		88E595042D5D10860016E224 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
@@ -189,7 +191,7 @@
 				88BF776B2D453EE600A5D23C /* OfficeModel.swift */,
 				88EF4EE42D6D079600FEC5FE /* ImageModel.swift */,
 				88C1A9762D611F1000BA598A /* PublishedFilesModel.swift */,
-				882D3E892D6A59E3006F3A95 /* FolderResponseModel.swift */,
+				88CE62A92D70A3A500102360 /* DownloadedResponceModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -207,6 +209,7 @@
 				883774FE2D3C342800C61981 /* ImageViewController.swift */,
 				88BF77472D40270A00A5D23C /* PDFViewComtroller.swift */,
 				88BF77632D453EAD00A5D23C /* OfficeViewController.swift */,
+				88D1799B2D6F109D0008B30B /* RenameViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -379,7 +382,6 @@
 				88C1A9702D60E9BD00BA598A /* OnboardingModel.swift in Sources */,
 				88C1A9712D60E9BD00BA598A /* ProfileModel.swift in Sources */,
 				886EA0FA2D04C95F00FB7A8F /* SceneDelegate.swift in Sources */,
-				882D3E8A2D6A59E3006F3A95 /* FolderResponseModel.swift in Sources */,
 				88E595072D5D10860016E224 /* AllFilesViewController.swift in Sources */,
 				88E595082D5D10860016E224 /* LoginViewController.swift in Sources */,
 				88E595092D5D10860016E224 /* OnboardingViewController.swift in Sources */,
@@ -389,6 +391,7 @@
 				88E595152D5D28C70016E224 /* LoginPresenter.swift in Sources */,
 				88E595162D5D28C70016E224 /* OnboardingPresenter.swift in Sources */,
 				88C1A9772D611F1000BA598A /* PublishedFilesModel.swift in Sources */,
+				88D1799C2D6F109E0008B30B /* RenameViewController.swift in Sources */,
 				88E595172D5D28C70016E224 /* ProfilePresenter.swift in Sources */,
 				883774FF2D3C342800C61981 /* ImageViewController.swift in Sources */,
 				88BF77482D40270A00A5D23C /* PDFViewComtroller.swift in Sources */,
@@ -406,6 +409,7 @@
 				88B91EEE2D6B53FD003DEC1F /* CoreDataManager.swift in Sources */,
 				889819902D6B9BB60050B1CA /* PublishedFilesModel.xcdatamodeld in Sources */,
 				88BF776A2D453EDD00A5D23C /* PDFModel.swift in Sources */,
+				88CE62AA2D70A3A500102360 /* DownloadedResponceModel.swift in Sources */,
 				88EF4EE52D6D079600FEC5FE /* ImageModel.swift in Sources */,
 				88EF4EE12D6CD54A00FEC5FE /* APIEndPoint.swift in Sources */,
 			);

@@ -4,8 +4,8 @@ protocol LastFilesView: AnyObject {
     func showLoading()
     func hideLoading()
     func showAllFiles(_ files: [PublishedFile])
-    func showFolderData(_ files: [PublishedFile])
     func showError(_ error: Error)
+    func showNoInternetBanner(message: String)
 }
 
 class LastLoadedFilesPresenter {
@@ -23,68 +23,89 @@ class LastLoadedFilesPresenter {
     func fetchLastLoadedFiles(limit: Int = 50, offset: Int = 0, baseURL: String = APIEndpoint.lastUpLoaded.url) {
         view?.showLoading()
         
-        let dispatchGroup = DispatchGroup()
-        var files: [PublishedFile] = []
-        var dirs: [PublishedFile] = []
-        
-        dispatchGroup.enter()
-        apiService.fetchFiles(oAuthToken: oAuthToken, baseURL: baseURL, limit: limit, offset: 0) { result in
-            switch result {
-            case .success(let fetchedFiles):
-                files = fetchedFiles
-            case .failure(let error):
-                print("Ошибка получения файлов: \(error)")
-            }
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        apiService.fetchDirs(oAuthToken: oAuthToken, baseURL: baseURL, limit: limit, offset: 0) { result in
-            switch result {
-            case .success(let fetchedDirs):
-                dirs = fetchedDirs
-            case .failure(let error):
-                print("Ошибка получения папок: \(error)")
-            }
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            let allItems = dirs + files
-            self.view?.hideLoading()
-            if !allItems.isEmpty {
-                CoreDataManager.shared.savePublishedFiles(allItems)
-                self.view?.showAllFiles(allItems)
-            } else {
-//                self.view?.showNoInternetBanner(message: "No internet connection")
-                let cachedFiles = CoreDataManager.shared.fetchPublishedFiles()
-                if !cachedFiles.isEmpty {
-                    print("Загружаем данные из кэша")
-                    self.view?.showAllFiles(cachedFiles)
-                } else {
-                    self.view?.showError(NSError(domain: "APIError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Нет доступных данных"]))
+        apiService.fetchFiles(oAuthToken: oAuthToken, baseURL: baseURL, limit: limit, offset: offset) { result in
+            DispatchQueue.main.async {
+                self.view?.hideLoading()
+                
+                switch result {
+                case .success(let fetchedFiles):
+                    if !fetchedFiles.isEmpty {
+                        CoreDataManager.shared.savePublishedFiles(fetchedFiles, for: "LastFilesViewController")
+                        self.view?.showAllFiles(fetchedFiles)
+                    } else {
+                        self.view?.showAllFiles([])
+                    }
+                    
+                case .failure(let error):
+                    let nsError = error as NSError
+                    if nsError.code == NSURLErrorNotConnectedToInternet ||
+                       nsError.code == NSURLErrorCannotFindHost {
+                        self.view?.showNoInternetBanner(message: "No internet. Loading cache data.")
+                        let cachedFiles = CoreDataManager.shared.fetchPublishedFiles(for: "LastFilesViewController")
+                        self.view?.showAllFiles(cachedFiles)
+                    } else {
+                        self.view?.showAllFiles([])
+                        self.view?.showError(error)
+                    }
                 }
             }
         }
     }
     
-    func fetchFolderContents(path: String, limit: Int = 50, baseURL: String = APIEndpoint.lastUpLoaded.url, offset: Int = 0, previewSize: String = "120x120", previewCrop: String = "true") {
-        view?.showLoading()
-        print("Fetching contents for folder at path: \(path)")
+    func downloadFile(path: String, completion: @escaping (Result<URL, Error>) -> Void) {
+        let fileName = (path as NSString).lastPathComponent
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(fileName)
         
-        apiService.fetchFolderMetadata(oAuthToken: oAuthToken, baseURL: baseURL, path: path, limit: limit, offset: offset, previewSize: previewSize, previewCrop: previewCrop) { result in
+        if FileManager.default.fileExists(atPath: documentsURL.path) {
+            DispatchQueue.main.async {
+                completion(.success(documentsURL))
+            }
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.view?.showLoading()
+        }
+        
+        apiService.fetchDownloadLink(oAuthToken: oAuthToken, path: path, baseURL: APIEndpoint.download.url) { [weak self] result in
+            guard let self = self else { return }
             switch result {
-            case .success(let fetchedFiles):
-                print("Successfully fetched folder contents: \(fetchedFiles)")
-                self.view?.hideLoading()
-                self.view?.showFolderData(fetchedFiles)
+            case .success(let downloadHref):
+                self.apiService.downloadFile(oAuthToken: self.oAuthToken, from: downloadHref) { downloadResult in
+                    DispatchQueue.main.async {
+                        self.view?.hideLoading()
+                    }
+                    switch downloadResult {
+                    case .success(let fileData):
+                        DispatchQueue.global(qos: .utility).async {
+                            do {
+                                try fileData.write(to: documentsURL)
+                                DispatchQueue.main.async {
+                                    completion(.success(documentsURL))
+                                }
+                            } catch {
+                                DispatchQueue.main.async {
+                                    completion(.failure(error))
+                                }
+                            }
+                        }
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            completion(.failure(error))
+                        }
+                    }
+                }
             case .failure(let error):
-                print("Error fetching folder contents: \(error)")
-                self.view?.showError(error)
+                DispatchQueue.main.async {
+                    self.view?.hideLoading()
+                    completion(.failure(error))
+                }
             }
         }
     }
-    
+
+
     func formattedFileSize(from size: Int?) -> String {
         guard let size = size else { return "Unknown size" }
         let mb = Double(size) / 1_048_576

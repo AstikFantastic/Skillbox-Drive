@@ -30,10 +30,14 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         NotificationCenter.default.addObserver(self, selector: #selector(handleFileDeleted), name: NSNotification.Name("FileDeleted"), object: nil)
     }
     
-    @objc private func handleFileDeleted() {
-        // Например, можно перезагрузить данные
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         presenter.fetchLastLoadedFiles()
-        // Или просто обновить tableView, если данные уже обновлены
+        tableView.reloadData()
+    }
+    
+    @objc private func handleFileDeleted() {
+        presenter.fetchLastLoadedFiles()
         tableView.reloadData()
     }
 
@@ -114,9 +118,50 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
+    func showNoInternetBanner(message: String) {
+        let banner = UILabel()
+        banner.backgroundColor = UIColor.red.withAlphaComponent(0.8)
+        banner.textColor = .white
+        banner.textAlignment = .center
+        banner.numberOfLines = 0
+        banner.text = message
+        banner.alpha = 0
+        
+        view.addSubview(banner)
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            banner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            banner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            banner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            banner.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        UIView.animate(withDuration: 0.3) {
+            banner.alpha = 1
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            UIView.animate(withDuration: 0.3, animations: {
+                banner.alpha = 0
+            }, completion: { _ in
+                banner.removeFromSuperview()
+            })
+        }
+    }
+    
     @objc private func didPullToRefresh(_ sender: UIRefreshControl) {
         presenter.fetchLastLoadedFiles()
     }
+    
+    private func showAlertFormatNotSupported() {
+        let alert = UIAlertController(title: "Not supported format",
+                                      message: "It will work later",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
+    
+    
     
     // MARK: - UITableViewDataSource
     
@@ -134,8 +179,8 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
         let fileSize = presenter.formattedFileSize(from: item.size)
         let creationDate = DateFormatter.formattedString(from: item.created)
         cell.configureUnpublishButton(shouldShow: false)
-        cell.configureNameLenght(-25)
-        cell.setupCell(fileName: fileName, fileSize: fileSize, creationDate: creationDate)
+        cell.configureNameLenght(-100)
+        cell.setupCell(fileName: fileName ?? "", fileSize: fileSize, creationDate: creationDate)
         cell.setImage(item: item)
         
         return cell
@@ -144,23 +189,45 @@ class LastFilesViewController: UIViewController, UITableViewDataSource, UITableV
     // MARK: - UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let file = files[indexPath.row]
-        print("Выбран файл: \(file.name)")
-        if let mediaType = file.mediaType {
-            switch mediaType {
-            case "document":
-                if file.name.lowercased().hasSuffix(".pdf") {
-                    router.navigateToPDFDetail(with: file)
+        let selectedItem = files[indexPath.row]
+        
+        guard let cell = tableView.cellForRow(at: indexPath) as? PublishedFilesCell else { return }
+        cell.showRightLoadingIndicator()
+        
+        presenter.downloadFile(path: selectedItem.path ?? "") { [weak self, weak cell] result in
+            DispatchQueue.main.async {
+                cell?.hideRightLoadingIndicator()
+            }
+            switch result {
+            case .success(_):
+                let fileExtension: String
+                if let name = selectedItem.name, !name.isEmpty {
+                    fileExtension = (name as NSString).pathExtension.lowercased()
+                } else if let file = selectedItem.file, !file.isEmpty {
+                    fileExtension = (file as NSString).pathExtension.lowercased()
                 } else {
-                    router.navigateToWebPage(with: file)
+                    fileExtension = ""
                 }
-            case "image":
-                router.navigateToFileDetail(with: file)
-            default:
-                print("%)")
+                DispatchQueue.main.async {
+                    switch fileExtension {
+                    case "pdf":
+                        self?.router.navigateToPDFDetail(with: selectedItem)
+                    case "doc", "docx", "txt", "xls", "xlsx", "pptx", "ptx":
+                        self?.router.navigateToWebPage(with: selectedItem)
+                    case "jpg", "jpeg", "png":
+                        self?.router.navigateToFileDetail(with: selectedItem)
+                    default:
+                        self?.showAlertFormatNotSupported()
+                    }
+                }
+            case .failure(_):
+                DispatchQueue.main.async {
+                    print("")
+                }
             }
         }
     }
+
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 45

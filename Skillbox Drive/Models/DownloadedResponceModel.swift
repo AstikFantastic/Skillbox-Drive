@@ -1,8 +1,7 @@
-//
-//  DownloadedResponceModel.swift
-//  Skillbox Drive
-//
-//  Created by Астимир Марышев on 2/27/25.
-//
-
 import Foundation
+
+struct DownloadURLResponse: Codable {
+    let href: String
+    let method: String
+    let templated: Bool
+}

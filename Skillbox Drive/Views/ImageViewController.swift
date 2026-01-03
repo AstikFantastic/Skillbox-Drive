@@ -1,12 +1,8 @@
 import UIKit
 
-protocol ImageViewProtocol: AnyObject {
-    func updateFrame(_ frame: CGRect)
-}
-
-class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
+class ImageViewController: UIViewController, FileDetailView {
     
-    private let item: PublishedFile
+    var item: PublishedFile
     private let presenter: ImagePresenter
     private let imageView = UIImageView()
     private let linkButton = UIButton(type: .system)
@@ -36,7 +32,6 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         
         setupUI()
 
-        
         imageView.isUserInteractionEnabled = true
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
@@ -44,14 +39,20 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         imageView.addGestureRecognizer(panGestureRecognizer)
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         tabBarController?.isTabBarHidden = false
     }
     
+    
     private func setupUI() {
         view.backgroundColor = .white
+        
+        let backNavButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.and.pencil.and.ellipsis"), style: .plain, target: self, action: #selector(renameButtonTapped))
+        navigationItem.rightBarButtonItem = backNavButton
+        
         tabBarController?.isTabBarHidden = true
         
         imageView.contentMode = .scaleAspectFit
@@ -88,23 +89,17 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     @objc func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
         
         if isFullScreen {
-            // Если изображение в полном экране, возвращаем его обратно
             UIView.animate(withDuration: 0.3, animations: {
-                // Возвращаем изображение в исходный размер с сохранением пропорций
                 self.imageView.transform = CGAffineTransform.identity
-                // Позиционируем изображение обратно в центр
                 self.imageView.center = self.view.center
                 print("Нормальное состояние")
             })
         } else {
-            // Если изображение не в полном экране, увеличиваем его так, чтобы оно выходило за пределы экрана
             UIView.animate(withDuration: 0.3, animations: {
-                // Вычисляем масштаб, чтобы изображение стало больше экрана
-                let scaleX = self.view.bounds.width / self.imageView.frame.width * 2 // Увеличиваем на 1.5 раза
-                let scaleY = self.view.bounds.height / self.imageView.frame.height * 2 // Увеличиваем на 1.5 раза
-                let scale = max(scaleX, scaleY)  // Увеличиваем изображение на большее значение по оси X или Y
+                let scaleX = self.view.bounds.width / self.imageView.frame.width * 2
+                let scaleY = self.view.bounds.height / self.imageView.frame.height * 2
+                let scale = max(scaleX, scaleY)
                 
-                // Применяем масштабирование
                 self.imageView.transform = CGAffineTransform(scaleX: scale, y: scale)
                 
                 self.imageView.center = self.view.center
@@ -113,17 +108,15 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
             })
         }
         
-        // Переключаем флаг
         isFullScreen.toggle()
     }
     
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-        // Перемещаем изображение только в том случае, если оно увеличено
+
         guard isFullScreen else { return }
         
         let translation = gesture.translation(in: view)
         
-        // Изменяем позицию изображения в зависимости от движения пальца
         if gesture.state == .changed {
             imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
             
@@ -131,10 +124,19 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         }
     }
     
-    func updateFrame(_ frame: CGRect) {
-        //        UIView.animate(withDuration: 0.3) {
-        //            self.imageView.frame = frame
-        //        }
+    @objc func renameButtonTapped() {
+        
+        let renameVC = RenameViewController()
+        renameVC.currentName = item.name ?? ""
+        
+        renameVC.onRename = { [weak self] newName in
+            guard let self = self else { return }
+
+            renameVC.hidesBottomBarWhenPushed = true
+            self.presenter.renameFile(newName: newName)
+        }
+        
+        navigationController?.pushViewController(renameVC, animated: true)
     }
     
     func updateNavigationBar() {
@@ -148,20 +150,29 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
     
     @objc private func shareFoto() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        let shareFileAction = UIAlertAction(title: "Поделиться файлом", style: .default) { _ in
-            guard let image = self.imageView.image else { return }
-            let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-            self.present(activityController, animated: true, completion: nil)
-        }
+            let shareFileAction = UIAlertAction(title: "Поделиться файлом", style: .default) { _ in
+                guard let image = self.imageView.image else { return }
+                guard let imageData = image.jpegData(compressionQuality: 1.0) else {
+                    return
+                }
+                let fileName = self.item.name
+                
+                let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName ?? "")
+                
+                do {
+                    try imageData.write(to: tempURL)
+                    let activityController = UIActivityViewController(activityItems: [tempURL], applicationActivities: nil)
+                    self.present(activityController, animated: true, completion: nil)
+                } catch {
+                    print("Ошибка при записи файла:", error)
+                }
+            }
         
         let shareLinkAction = UIAlertAction(title: "Поделиться ссылкой", style: .default) { [self] _ in
-                    // Сначала публикуем ресурс
                     presenter.publishResource { [weak self] publishResult in
                         guard let self = self else { return }
                         switch publishResult {
                         case .success:
-                            // Затем получаем public_url
                             self.presenter.fetchPublicURL { fetchResult in
                                 DispatchQueue.main.async {
                                     switch fetchResult {
@@ -212,9 +223,6 @@ class ImageViewController: UIViewController, FileDetailView, ImageViewProtocol {
         present(alert, animated: true)
     }
     
-    private func deleteImage() {
-        print("Изображение удалено")
-    }
 }
 
 
