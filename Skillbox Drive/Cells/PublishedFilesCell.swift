@@ -211,7 +211,7 @@ class PublishedFilesCell: UITableViewCell {
         previewImage.image = nil
         
         if item.type == "dir" {
-            previewImage.image = UIImage(named: "folder")
+            previewImage.image = UIImage(named: "Folder")
         } else if item.type == "file" {
             let fileExtension: String
             if let name = item.name, !name.isEmpty {
